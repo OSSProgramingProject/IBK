@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'IBK',  # IBK 앱을 여기에 추가
 ]
 
 MIDDLEWARE = [

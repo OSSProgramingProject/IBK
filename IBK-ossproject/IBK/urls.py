@@ -10,6 +10,8 @@ urlpatterns = [
     path('question-bank/', views.question_bank, name='question_bank'),  # 문제 은행 페이지
     path('community/', views.community, name='community'),  # 커뮤니티 페이지
     path('blog-post/', views.blog_post, name='blog_post'),  # 블로그 페이지
-    path('signup/', views.signup, name='signup'),  # 회원가입 페이지 추가
+    path('signup/', views.signup, name='signup'),  # 회원가입 페이지
+    path('post/<int:id>/', views.post_detail, name='post_detail'),  # 포스트 상세 페이지
+    path('find-id/', views.find_id, name='find_id'),  # ID 찾기 페이지
+    path('find-password/', views.find_password, name='find_password'),  # 비밀번호 찾기 페이지
 ]
-
