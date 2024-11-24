@@ -2,21 +2,40 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import UserProfile  # Post 모델을 사용한다고 가정
 from django.contrib import messages
 from .forms import UserRegisterForm
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.decorators import login_required
 
 # 기존 뷰 함수들
 def home(request):
     return render(request, 'home.html')  # home.html을 렌더링
 
-def login(request):
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, f'Welcome, {username}!')
+            return redirect('profile_management')  # 로그인 후 프로필 관리 페이지로 이동
+        else:
+            messages.error(request, 'Invalid username or password.')
     return render(request, 'login.html')  # login.html을 렌더링
 
+@login_required # 이 데코레이터를 사용하면 로그인한 사용자만 특정 페이지에 접근하도록 할 수 있음
 def profile_management(request):
     # 현재 사용자를 가져옵니다 (예를 들어, user_id가 1인 사용자라고 가정)
-    user_profile = get_object_or_404(UserProfile, pk=1)
-
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+    # 예외 처리 - 사용자 프로필이 없을 때
+        user_profile = None
     if request.method == "POST":
         # 폼에서 전달된 데이터로 사용자 정보 업데이트
-        user_profile.user_name = request.POST.get('user_name')
+        #user_profile.user_name = request.POST.get('user_name', user_profile.user_name)
+        request.user.username = request.POST.get('user_name')
+        request.user.save()
         user_profile.solved_problems = request.POST.get('solved_problems')
         user_profile.save()  # 변경 사항 저장
 
@@ -24,7 +43,9 @@ def profile_management(request):
 
     # 페이지 로드 시 현재 사용자 정보를 컨텍스트로 전달하여 렌더링
     context = {
-        'user_name': user_profile.user_name,
+        'user_profile': user_profile,
+        'user_name' : request.user.username,
+        # 'user_name': user_profile.user.user_name, # 문제발생지점
         'solved_problems': user_profile.solved_problems,
     }
     return render(request, 'profile-management.html', context)

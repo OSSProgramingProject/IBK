@@ -4,8 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),  # 홈 페이지
-    #path('login/', views.login, name='login'),  # 로그인 페이지
-    path('login/', auth_views.LoginView.as_view(template_name='myapp/login.html'), name='login'),
+    path('login/', views.user_login, name='login'),  # 로그인 페이지 - 사용자 정의함수 사용
+    #path('login/', auth_views.LoginView.as_view(template_name='myapp/login.html'), name='login'), # 로그인 페이지- Django 내장 로그인 뷰 사용
     path('profile-management/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
     path('user_problem/', views.user_problem, name='user_problem'),  # 문제 해결 페이지
     path('problem-creation/', views.problem_creation, name='problem_creation'),  # 문제 생성 페이지

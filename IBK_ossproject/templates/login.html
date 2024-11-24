@@ -52,15 +52,17 @@
                         </div>
                         <div class="row gx-5 justify-content-center">
                             <div class="col-lg-6 col-xl-4">
-                                <form id="loginForm">
+                                <!-- Login Form -->
+                                <form id="loginForm" method="POST">
+                                    {% csrf_token %}
                                     <!-- Username input -->
                                     <div class="form-floating mb-3">
-                                        <input class="form-control" id="username" type="text" placeholder="Enter your username..." required />
+                                        <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username..." required />
                                         <label for="username">Username</label>
                                     </div>
                                     <!-- Password input -->
                                     <div class="form-floating mb-3">
-                                        <input class="form-control" id="password" type="password" placeholder="Enter your password..." required />
+                                        <input class="form-control" id="password" name="password" type="password" placeholder="Enter your password..." required />
                                         <label for="password">Password</label>
                                     </div>
                                     <!-- Submit Button -->

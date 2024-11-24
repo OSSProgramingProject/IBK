@@ -9,7 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('IBK_ossproject/', include('IBK_ossproject.urls')),# myapp의 urls.py 포함
     path('', views.home, name='home'),  # 홈 페이지
-    path('login/', views.login, name='login'),  # 로그인 페이지
+    path('login/', views.user_login, name='login'),  # 로그인 페이지
     path('profile-management/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
     path('user_problem/', views.user_problem, name='user_problem'),  # 문제 해결 페이지
     path('problem-creation/', views.problem_creation, name='problem_creation'),  # 문제 생성 페이지

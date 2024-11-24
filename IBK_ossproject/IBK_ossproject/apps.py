@@ -84,10 +84,10 @@ def get_problems():
 
 class MyappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'myapp'
+    name = 'IBK_ossproject'
 
     def ready(self):
-        import myapp.signals
+        import IBK_ossproject.signals
 
 if __name__ == '__main__':
     app.run(debug=True)
