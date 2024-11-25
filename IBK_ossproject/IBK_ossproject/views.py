@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import UserRegisterForm
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout
 
 # 기존 뷰 함수들
 def home(request):
@@ -18,22 +19,29 @@ def user_login(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, f'Welcome, {username}!')
+            print("성공햇음...제발...해줘...")
             return redirect('profile_management')  # 로그인 후 프로필 관리 페이지로 이동
         else:
             messages.error(request, 'Invalid username or password.')
+            print("실패햇음!!!")
     return render(request, 'login.html')  # login.html을 렌더링
+
+def user_logout(request):
+    auth_logout(request)
+    return redirect('home')
+
 
 @login_required # 이 데코레이터를 사용하면 로그인한 사용자만 특정 페이지에 접근하도록 할 수 있음
 def profile_management(request):
     # 현재 사용자를 가져옵니다 (예를 들어, user_id가 1인 사용자라고 가정)
     try:
         user_profile = UserProfile.objects.get(user=request.user)
+        #user_name = user_profile.user_name # UserProfile 모델의 user_name 속성 접근
     except UserProfile.DoesNotExist:
     # 예외 처리 - 사용자 프로필이 없을 때
         user_profile = None
+        
     if request.method == "POST":
-        # 폼에서 전달된 데이터로 사용자 정보 업데이트
-        #user_profile.user_name = request.POST.get('user_name', user_profile.user_name)
         request.user.username = request.POST.get('user_name')
         request.user.save()
         user_profile.solved_problems = request.POST.get('solved_problems')

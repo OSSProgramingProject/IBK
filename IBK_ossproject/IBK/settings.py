@@ -82,3 +82,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000'] #"POST /login/ HTTP/1.1" 403 2503오류 발생.. >  이 코드(csrf 허용)을 통해 해결
