@@ -1,176 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Start ideabank</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="css/styles.css" rel="stylesheet" />
-    </head>
-    <body class="d-flex flex-column h-100">
-        <main class="flex-shrink-0">
-            <!-- Navigation-->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="container px-5">
-                    <a class="navbar-brand" href="{% url 'home' %}">Start ideabank</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownUserManagement" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">User Management</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUserManagement">
-                                    <li><a class="dropdown-item" href="{% url 'profile_management' %}">Profile Management</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'user_problem' %}">Problem Solving</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'problem_creation' %}">Problem Creation</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'question_bank' %}">Question Bank</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'community' %}">Community</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'blog_post' %}">Blog</a></li>
-                        </ul>
+{% extends 'base.html' %}
+
+{% block title %}문제 은행 - Start ideabank{% endblock %}
+
+{% block content %}
+    <!-- Header-->
+    <header class="py-5">
+        <div class="container px-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xxl-6">
+                    <div class="text-center my-5">
+                        <h1 class="fw-bolder mb-3">Our mission is to make building websites easier for everyone.</h1>
+                        <p class="lead fw-normal text-muted mb-4">Start Bootstrap was built on the idea that quality, functional website templates and themes should be available to everyone. Use our open source, free products, or support us by purchasing one of our premium products or services.</p>
+                        <a class="btn btn-primary btn-lg" href="#scroll-target">Read our story</a>
                     </div>
                 </div>
-            </nav>
-            
-            <!-- Header-->
-            <header class="py-5">
-                <div class="container px-5">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8 col-xxl-6">
-                            <div class="text-center my-5">
-                                <h1 class="fw-bolder mb-3">Our mission is to make building websites easier for everyone.</h1>
-                                <p class="lead fw-normal text-muted mb-4">Start Bootstrap was built on the idea that quality, functional website templates and themes should be available to everyone. Use our open source, free products, or support us by purchasing one of our premium products or services.</p>
-                                <a class="btn btn-primary btn-lg" href="#scroll-target">Read our story</a>
-                            </div>
-                        </div>
+            </div>
+        </div>
+    </header>
+    <!-- Problem Bank Search Section-->
+    <section class="py-5 bg-light" id="problem-search-section">
+        <div class="container px-5 my-5">
+            <div class="text-center">
+                <h2 class="fw-bolder">Explore Problems</h2>
+                <p class="lead fw-normal text-muted mb-5">Find problems by category, difficulty, tags, or keywords</p>
+            </div>
+            <!-- Problem Search Form-->
+            <form id="problem-search-form">
+                <div class="row gx-5">
+                    <div class="col-md-4 mb-3">
+                        <label for="categorySelect" class="form-label">Category</label>
+                        <select id="categorySelect" class="form-select">
+                            <option selected>All Categories</option>
+                            <option value="math">Math</option>
+                            <option value="science">Science</option>
+                            <option value="history">History</option>
+                            <option value="programming">Programming</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="difficultySelect" class="form-label">Difficulty</label>
+                        <select id="difficultySelect" class="form-select">
+                            <option selected>Any Difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="tagInput" class="form-label">Tags</label>
+                        <input type="text" class="form-control" id="tagInput" placeholder="Enter tags (e.g., algebra, arrays)" />
                     </div>
                 </div>
-            </header>
-            <!-- Problem Bank Search Section-->
-            <section class="py-5 bg-light" id="problem-search-section">
-                <div class="container px-5 my-5">
-                    <div class="text-center">
-                        <h2 class="fw-bolder">Explore Problems</h2>
-                        <p class="lead fw-normal text-muted mb-5">Find problems by category, difficulty, tags, or keywords</p>
-                    </div>
-                    <!-- Problem Search Form-->
-                    <form id="problem-search-form">
-                        <div class="row gx-5">
-                            <div class="col-md-4 mb-3">
-                                <label for="categorySelect" class="form-label">Category</label>
-                                <select id="categorySelect" class="form-select">
-                                    <option selected>All Categories</option>
-                                    <option value="math">Math</option>
-                                    <option value="science">Science</option>
-                                    <option value="history">History</option>
-                                    <option value="programming">Programming</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="difficultySelect" class="form-label">Difficulty</label>
-                                <select id="difficultySelect" class="form-select">
-                                    <option selected>Any Difficulty</option>
-                                    <option value="easy">Easy</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="hard">Hard</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="tagInput" class="form-label">Tags</label>
-                                <input type="text" class="form-control" id="tagInput" placeholder="Enter tags (e.g., algebra, arrays)" />
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-primary btn-lg">Search</button>
-                        </div>
-                    </form>
-                    <!-- Problem List (dynamically filled after search)-->
-                    <div id="problem-list" class="mt-5">
-                        <!-- Example Problem-->
-                        <div class="problem-item border p-4 mb-3 rounded">
-                            <h5 class="fw-bolder">Problem Title 1</h5>
-                            <p class="text-muted">Category: Math | Difficulty: Medium | Tags: Algebra, Linear Equations</p>
-                            <p>Description of the problem...</p>
-                            <a href="#" class="btn btn-link">View Problem</a>
-                        </div>
-                        <!-- More problems will be populated here-->
-                    </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-lg">Search</button>
                 </div>
-            </section>
-            <!-- Footer-->
-            <footer class="bg-dark py-4 mt-auto">
-                <div class="container px-5">
-                    <div class="row align-items-center justify-content-between flex-column flex-sm-row">
-                        <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Your Website 2023</div></div>
-                        <div class="col-auto">
-                            <a class="link-light small" href="#!">Privacy</a>
-                            <span class="text-white mx-1">&middot;</span>
-                            <a class="link-light small" href="#!">Terms</a>
-                            <span class="text-white mx-1">&middot;</span>
-                            <a class="link-light small" href="#!">Contact</a>
-                        </div>
-                    </div>
+            </form>
+            <!-- Problem List (dynamically filled after search)-->
+            <div id="problem-list" class="mt-5">
+                <!-- Example Problem-->
+                <div class="problem-item border p-4 mb-3 rounded">
+                    <h5 class="fw-bolder">Problem Title 1</h5>
+                    <p class="text-muted">Category: Math | Difficulty: Medium | Tags: Algebra, Linear Equations</p>
+                    <p>Description of the problem...</p>
+                    <a href="#" class="btn btn-link">View Problem</a>
                 </div>
-            </footer>
-        </main>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-        <!-- Custom JS for problem search-->
-        <script>
-            // Handling problem search
-            document.getElementById("problem-search-form").addEventListener("submit", function(event) {
-                event.preventDefault();
+                <!-- More problems will be populated here-->
+            </div>
+        </div>
+    </section>
 
-                const category = document.getElementById("categorySelect").value;
-                const difficulty = document.getElementById("difficultySelect").value;
-                const tags = document.getElementById("tagInput").value.trim();
+    <!-- Custom JS for problem search-->
+    <script>
+        // Handling problem search
+        document.getElementById("problem-search-form").addEventListener("submit", function(event) {
+            event.preventDefault();
 
-                // Simulating problem filtering based on search criteria
-                let filteredProblems = []; // This would be populated with actual filtered data based on your backend/API
+            const category = document.getElementById("categorySelect").value;
+            const difficulty = document.getElementById("difficultySelect").value;
+            const tags = document.getElementById("tagInput").value.trim();
 
-                // For now, we'll display some mock problems as an example
-                filteredProblems = [
-                    {
-                        title: "Problem 1",
-                        description: "Description of problem 1",
-                        category: "Math",
-                        difficulty: "Medium",
-                        tags: ["Algebra", "Linear Equations"],
-                    },
-                    {
-                        title: "Problem 2",
-                        description: "Description of problem 2",
-                        category: "Programming",
-                        difficulty: "Hard",
-                        tags: ["Algorithms", "Dynamic Programming"],
-                    },
-                ];
+            // Simulating problem filtering based on search criteria
+            let filteredProblems = []; // This would be populated with actual filtered data based on your backend/API
 
-                const problemList = document.getElementById("problem-list");
-                problemList.innerHTML = ''; // Clear previous results
+            // For now, we'll display some mock problems as an example
+            filteredProblems = [
+                {
+                    title: "Problem 1",
+                    description: "Description of problem 1",
+                    category: "Math",
+                    difficulty: "Medium",
+                    tags: ["Algebra", "Linear Equations"],
+                },
+                {
+                    title: "Problem 2",
+                    description: "Description of problem 2",
+                    category: "Programming",
+                    difficulty: "Hard",
+                    tags: ["Algorithms", "Dynamic Programming"],
+                },
+            ];
 
-                filteredProblems.forEach(problem => {
-                    const problemItem = document.createElement("div");
-                    problemItem.classList.add("problem-item", "border", "p-4", "mb-3", "rounded");
-                    problemItem.innerHTML = `
-                        <h5 class="fw-bolder">${problem.title}</h5>
-                        <p class="text-muted">Category: ${problem.category} | Difficulty: ${problem.difficulty} | Tags: ${problem.tags.join(', ')}</p>
-                        <p>${problem.description}</p>
-                        <a href="#" class="btn btn-link">View Problem</a>
-                    `;
-                    problemList.appendChild(problemItem);
-                });
+            const problemList = document.getElementById("problem-list");
+            problemList.innerHTML = ''; // Clear previous results
+
+            filteredProblems.forEach(problem => {
+                const problemItem = document.createElement("div");
+                problemItem.classList.add("problem-item", "border", "p-4", "mb-3", "rounded");
+                problemItem.innerHTML = `
+                    <h5 class="fw-bolder">${problem.title}</h5>
+                    <p class="text-muted">Category: ${problem.category} | Difficulty: ${problem.difficulty} | Tags: ${problem.tags.join(', ')}</p>
+                    <p>${problem.description}</p>
+                    <a href="#" class="btn btn-link">View Problem</a>
+                `;
+                problemList.appendChild(problemItem);
             });
-        </script>
-    </body>
-</html>
+        });
+    </script>
+{% endblock %}

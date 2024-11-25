@@ -84,3 +84,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000'] #"POST /login/ HTTP/1.1" 403 2503오류 발생.. >  이 코드(csrf 허용)을 통해 해결
+
+# 세션 설정-없어도 되긴함
+SESSION_COOKIE_AGE = 3600  # 세션 유지 시간: 1시간 (초 단위)
+SESSION_SAVE_EVERY_REQUEST = True  # 요청마다 세션 갱신

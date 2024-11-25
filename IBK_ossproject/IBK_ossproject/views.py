@@ -19,11 +19,9 @@ def user_login(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, f'Welcome, {username}!')
-            print("성공햇음...제발...해줘...")
             return redirect('profile_management')  # 로그인 후 프로필 관리 페이지로 이동
         else:
             messages.error(request, 'Invalid username or password.')
-            print("실패햇음!!!")
     return render(request, 'login.html')  # login.html을 렌더링
 
 def user_logout(request):
@@ -40,7 +38,7 @@ def profile_management(request):
     except UserProfile.DoesNotExist:
     # 예외 처리 - 사용자 프로필이 없을 때
         user_profile = None
-        
+    
     if request.method == "POST":
         request.user.username = request.POST.get('user_name')
         request.user.save()
