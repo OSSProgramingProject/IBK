@@ -88,3 +88,16 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000'] #"POST
 # 세션 설정-없어도 되긴함
 SESSION_COOKIE_AGE = 3600  # 세션 유지 시간: 1시간 (초 단위)
 SESSION_SAVE_EVERY_REQUEST = True  # 요청마다 세션 갱신
+
+
+# 이메일 백엔드 설정 (로컬 개발에서 이메일을 실제로 보내지 않고 콘솔에 출력)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# 실제 이메일을 보내는 경우, Gmail SMTP 설정 예시
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '20211896@gmail.com'  # 실제 Gmail 이메일 주소
+EMAIL_HOST_PASSWORD = 'jms020625!'  # Gmail 이메일 비밀번호 (앱 비밀번호 사용 권장)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
