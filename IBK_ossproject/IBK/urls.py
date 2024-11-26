@@ -22,6 +22,7 @@ urlpatterns = [
     path('findpassword/', views.findpassword, name='findpassword'),  # 비밀번호 찾기 페이지
     path('findpassword-result/', views.findpassword_result, name='findpassword_result'),  # 비밀번호 찾기 결과 페이지
     path('profile/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
+    path('admin/', admin.site.urls), #관리자 페이지 경로 설정
     
 ]
 if settings.DEBUG:
