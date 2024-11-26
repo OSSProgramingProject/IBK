@@ -9,10 +9,19 @@
                     <div class="my-5 text-center text-xl-start">
                         <h1 class="display-5 fw-bolder text-white mb-2">문제은행 웹사이트에 오신 것을 환영합니다</h1>
                         <p class="lead fw-normal text-white-50 mb-4">쉽고 빠르게 다양한 문제를 탐색하고 풀이를 확인하세요.</p>
-                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
-                            <a class="btn btn-light btn-lg px-4 me-sm-3" href="{% url 'login' %}">로그인</a>
-                            <a class="btn btn-outline-light btn-lg px-4" href="{% url 'signup' %}">회원가입</a>
-                        </div>
+                        
+                        <!-- 로그인 상태 확인 -->
+                        {% if user.is_authenticated %}
+                            <!-- 로그인 상태에서는 다른 메시지 표시 -->
+                            <p class="text-white">환영합니다, {{ user.username }}님! 😊</p>
+                            <a class="btn btn-light btn-lg px-4 me-sm-3" href="{% url 'question_bank' %}">문제 탐색하기</a>
+                        {% else %}
+                            <!-- 비로그인 상태에서만 버튼 표시 -->
+                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                                <a class="btn btn-light btn-lg px-4 me-sm-3" href="{% url 'login' %}">로그인</a>
+                                <a class="btn btn-outline-light btn-lg px-4" href="{% url 'signup' %}">회원가입</a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -99,4 +108,8 @@
             </div>
         </div>
     </section>
+    
 {% endblock %}
+
+
+
