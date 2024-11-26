@@ -13,7 +13,7 @@
                         <!-- 로그인 상태 확인 -->
                         {% if user.is_authenticated %}
                             <!-- 로그인 상태에서는 다른 메시지 표시 -->
-                            <p class="text-white">환영합니다, {{ user.username }}님! 😊</p>
+                            <p class="text-white">환영합니다, {{ user.username }}님! 스윽스윽</p>
                             <a class="btn btn-light btn-lg px-4 me-sm-3" href="{% url 'question_bank' %}">문제 탐색하기</a>
                         {% else %}
                             <!-- 비로그인 상태에서만 버튼 표시 -->
