@@ -23,7 +23,7 @@ def user_login(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, f'Welcome, {username}!')
-            return redirect('profile_management')
+            return redirect('home')
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'login.html')
