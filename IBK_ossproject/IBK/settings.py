@@ -12,7 +12,6 @@ ALLOWED_HOSTS = []
 LOGIN_REDIRECT_URL = 'home'  # 로그인 성공 후 이동할 페이지
 LOGOUT_REDIRECT_URL = 'home'  # 로그아웃 후 이동할 페이지
 
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -83,7 +82,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000'] #"POST /login/ HTTP/1.1" 403 2503오류 발생.. >  이 코드(csrf 허용)을 통해 해결
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']  # CSRF 오류 해결
 
 # 세션 설정-없어도 되긴함
 SESSION_COOKIE_AGE = 3600  # 세션 유지 시간: 1시간 (초 단위)
@@ -91,13 +90,16 @@ SESSION_SAVE_EVERY_REQUEST = True  # 요청마다 세션 갱신
 
 
 # 이메일 백엔드 설정 (로컬 개발에서 이메일을 실제로 보내지 않고 콘솔에 출력)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # 주석 처리하여 콘솔 출력을 비활성화
 
 # 실제 이메일을 보내는 경우, Gmail SMTP 설정 예시
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '20211896@gmail.com'  # 실제 Gmail 이메일 주소
-EMAIL_HOST_PASSWORD = 'jms020625!'  # Gmail 이메일 비밀번호 (앱 비밀번호 사용 권장)
+
+# 본인 Gmail 계정과 앱 비밀번호 사용
+EMAIL_HOST_USER = '20211896@edu.hanbat.ac.kr'  # 본인 Gmail 계정
+EMAIL_HOST_PASSWORD = 'yanu lsie towe cxme'  # 앱 비밀번호 입력 (예: 'abcdefgh12345678')
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
