@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from django.apps import AppConfig
 import os
@@ -8,25 +8,33 @@ app = Flask(__name__)
 # SQLite 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///problems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 
 # 데이터베이스 모델 정의
 class Problem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    options = db.Column(db.Text, nullable=True)
-    image_path = db.Column(db.String(200), nullable=True)
-    category = db.Column(db.String(50), nullable=False)
-    difficulty = db.Column(db.String(20), nullable=False)
-    tags = db.Column(db.String(200), nullable=True)
+    id = db.Column(db.Integer, primary_key=True) # 고유 ID
+    title = db.Column(db.String(100), nullable=False)   # 문제 제목
+    description = db.Column(db.Text, nullable=False) #문제 설명
+    options = db.Column(db.Text, nullable=True) # 선택지 (콤마로 구분된 문자열)
+    image_path = db.Column(db.String(200), nullable=True) # 이미지 경로
+    category = db.Column(db.String(50), nullable=False)  # 카테고리
+    difficulty = db.Column(db.String(20), nullable=False) # 난이도(쉬움/중간/어려움)
+    tags = db.Column(db.String(200), nullable=True) # 태그 (쉼표로 구분)
 
 # 데이터베이스 테이블 생성
 with app.app_context():
     db.create_all()
+
+
+@app.route('/')
+def home():
+    # 문제 목록 가져오기
+    problems = Problem.query.all() # 데이터베이스에서 문제 목록 가져오기
+    return render_template('user_problem.html', problems=problems)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_problem():
@@ -80,6 +88,23 @@ def get_problems():
             'tags': problem.tags
         })
     return jsonify(problems_data)
+
+@app.route('/problem/<int:problem_id>', methods=['GET'])
+def get_problem(problem_id):
+    problem = Problem.query.get(problem_id)  # ID로 문제 조회
+    if problem:
+        return jsonify({
+            "id": problem.id,
+            "title": problem.title,
+            "description": problem.description,
+            "options": problem.options.split(', ') if problem.options else [],
+            "category": problem.category,
+            "difficulty": problem.difficulty,
+            "tags": problem.tags,
+            "image_path": problem.image_path
+        })
+    else:
+        return jsonify({"error": "문제를 찾을 수 없습니다."}), 404
 
 
 class MyappConfig(AppConfig):

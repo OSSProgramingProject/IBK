@@ -9,6 +9,8 @@ from django.contrib.auth import logout as auth_logout
 from django.core.mail import send_mail
 import random
 import string
+from django.http import JsonResponse
+from .models import Problem
 
 # 기존 뷰 함수들
 def home(request):
@@ -144,3 +146,24 @@ def find_id_result(request):
 
 def findpassword_result(request):  # 변경된 함수 이름
     return render(request, 'findpassword_result.html')
+
+
+# 문제 목록 보기
+def problem_list(request):
+    problems = Problem.objects.all()
+    return render(request, 'problems/problem_list.html', {'problems': problems})
+
+
+# 특정 문제 보기
+def problem_detail(request, problem_id):
+    problem = get_object_or_404(Problem, id=problem_id)
+    return JsonResponse({
+        'id': problem.id,
+        'title': problem.title,
+        'description': problem.description,
+        'options': problem.options.split(', ') if problem.options else [],
+        'category': problem.category,
+        'difficulty': problem.difficulty,
+        'tags': problem.tags,
+        'image_path': problem.image_path.url if problem.image_path else None,
+    })
