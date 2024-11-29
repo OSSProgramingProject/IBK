@@ -118,6 +118,17 @@ def blog_detail(request, pk):
     blog = get_object_or_404(BlogPost, pk=pk)
     return render(request, 'blog_detail.html', {'blog': blog})
 
+def blog_edit(request, pk):
+    blog = get_object_or_404(BlogPost, pk=pk)
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=blog)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_post')
+    else:
+        form = BlogPostForm(instance=blog)
+    return render(request, 'IBK_ossproject/blog_edit.html', {'form': form, 'blog': blog})
+
 def user_problem(request):
     return render(request, 'user_problem.html')
 
