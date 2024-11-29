@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import Follow, Friendship, Message
 from .forms import FollowForm, MessageForm
+from django.db.models import Q
 import random
 import string
 
@@ -53,7 +54,7 @@ def profile_management(request):
         'user_profile': user_profile,
         'user_name': request.user.username,
         'solved_problems': user_profile.solved_problems,
-        'friends': Friendship.objects.filter(user1=request.user),
+        'friends': Friendship.objects.filter(Q(user1=request.user) | Q(user2=request.user)),
     }
     return render(request, 'profile-management.html', context)
 
