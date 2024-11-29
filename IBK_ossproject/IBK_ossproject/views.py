@@ -114,6 +114,9 @@ def blog_post(request):
     blog_posts = BlogPost.objects.all().order_by('-created_at')
     return render(request, 'blog-post.html', {'blog_posts': blog_posts})
 
+def blog_detail(request, pk):
+    blog = get_object_or_404(BlogPost, pk=pk)
+    return render(request, 'blog_detail.html', {'blog': blog})
 
 def user_problem(request):
     return render(request, 'user_problem.html')
