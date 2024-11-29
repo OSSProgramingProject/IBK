@@ -7,7 +7,7 @@
             <div class="text-center my-5">
                 <h1 id="header-title" class="fw-bolder editable" contenteditable="false">블로그에 오신 것을 환영합니다!</h1>
                 <p id="header-description" class="lead mb-0 editable" contenteditable="false">다양한 문제와 풀이를 공유하는 플랫폼</p>
-                <a id="header-button" href="blog-creation.html" class="btn btn-primary mt-3">블로그 게시하기</a>
+                <a id="header-button" href="{% url 'blog_creation' %}" class="btn btn-primary mt-3">블로그 게시하기</a>
                 <button id="edit-header-button" class="btn btn-secondary mt-3">수정</button>
                 <button id="save-header-button" class="btn btn-success mt-3 d-none">저장</button>
             </div>
@@ -21,16 +21,25 @@
             <div class="col-lg-8">
                 <!-- 주요 블로그 게시물 -->
                 <div class="card mb-4">
-                    <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg" alt="..." /></a>
-                    <div class="card-body">
-                        <div class="small text-muted">2023년 1월 1일</div>
-                        <h2 class="card-title">주요 게시물 제목</h2>
-                        <p class="card-text">이곳은 블로그 주요 게시물을 소개하는 섹션입니다. 다양한 내용을 공유하세요!</p>
-                        <a class="btn btn-primary" href="#!">자세히 보기 →</a>
-                    </div>
+                    {% if blog_posts %}
+                        {% for blog in blog_posts %}
+                            {% if blog.image %}
+                                <a href="#!"><img class="card-img-top" src="{{ blog.image.url }}" alt="블로그 이미지" /></a>
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="small text-muted">{{ blog.created_at|date:"Y년 m월 d일" }}</div>
+                                <h2 class="card-title">{{ blog.title }}</h2>
+                                <p class="card-text">{{ blog.content|truncatechars:100 }}</p>
+                                <a class="btn btn-primary" href="#!">자세히 보기 →</a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>게시된 블로그 글이 없습니다.</p>
+                    {% endif %}
                 </div>
+
                 <!-- 추가 블로그 게시물 -->
-                <div class="row">
+                <!--div class="row">
                     <div class="col-lg-6">
                         <div class="card mb-4">
                             <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
@@ -53,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
             <!-- 사이드바 -->
             <div class="col-lg-4">
@@ -93,7 +102,7 @@
                 <div class="card mb-4">
                     <div class="card-header">블로그 게시하기</div>
                     <div class="card-body">
-                        <a href="blog-creation.html" class="btn btn-primary">게시물 작성하기</a>
+                        <a href="{% url 'blog_creation' %}" class="btn btn-primary">게시물 작성하기</a>
                     </div>
                 </div>
             </div>

@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 from .models import Follow, Friendship, Message
 from .forms import FollowForm, MessageForm
 from django.db.models import Q
+from .models import BlogPost
+from .forms import BlogPostForm
 import random
 import string
 
@@ -95,6 +97,24 @@ def add_friend(request):
 
     return redirect('profile_management')
 
+@login_required
+def blog_create(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+            blog_post.save()
+            return redirect('blog_post')
+    else:
+        form = BlogPostForm()
+    return render(request, 'blog_creation.html', {'form': form})
+
+def blog_post(request):
+    blog_posts = BlogPost.objects.all().order_by('-created_at')
+    return render(request, 'blog-post.html', {'blog_posts': blog_posts})
+
+
 def user_problem(request):
     return render(request, 'user_problem.html')
 
@@ -107,8 +127,6 @@ def question_bank(request):
 def community(request):
     return render(request, 'community.html')
 
-def blog_post(request):
-    return render(request, 'blog-post.html')
 
 def signup(request):
     if request.method == 'POST':

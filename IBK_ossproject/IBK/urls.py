@@ -26,7 +26,8 @@ urlpatterns = [
     path('follow/', views.follow_user, name='follow_user'),
     path('send_message/', views.send_message, name='send_message'),
     path('add_friend/', views.add_friend, name='add_friend'),
-]
+    path('blog_creat/', views.blog_create, name='blog_creation'),  # 블로그 작성 페이지
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     #urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
