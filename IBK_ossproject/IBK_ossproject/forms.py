@@ -21,3 +21,17 @@ class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
         fields = ['title', 'category', 'content', 'image']
+
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 5}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(BlogPostForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.instance and self.instance.author != self.user:
+            raise forms.ValidationError("You are not allowed to edit this post.")
+        return cleaned_data

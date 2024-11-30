@@ -118,16 +118,30 @@ def blog_detail(request, pk):
     blog = get_object_or_404(BlogPost, pk=pk)
     return render(request, 'blog_detail.html', {'blog': blog})
 
+@login_required
 def blog_edit(request, pk):
-    blog = get_object_or_404(BlogPost, pk=pk)
+    # 블로그 게시글 가져오기
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+
+    # 현재 사용자가 게시글 작성자인지 확인
+    if blog_post.author != request.user:
+        messages.error(request, "You are not authorized to edit this blog post.")
+        return redirect('blog_post')  # 사용자에게 권한이 없을 경우 게시글 목록으로 리디렉션
+
+    # 폼 생성
     if request.method == 'POST':
-        form = BlogPostForm(request.POST, request.FILES, instance=blog)
+        # POST 요청 시 폼을 작성하고 유효성을 검사합니다.
+        form = BlogPostForm(request.POST, instance=blog_post, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('blog_post')
+            messages.success(request, "Blog post updated successfully.")
+            return redirect('blog_detail', pk=blog_post.pk)
     else:
-        form = BlogPostForm(instance=blog)
-    return render(request, 'IBK_ossproject/blog_edit.html', {'form': form, 'blog': blog})
+        # GET 요청 시 작성된 내용이 미리 채워진 폼을 표시합니다.
+        form = BlogPostForm(instance=blog_post, user=request.user)
+
+    # 폼을 렌더링합니다.
+    return render(request, 'IBK_ossproject/blog_edit.html', {'form': form, 'blog_post': blog_post})
 
 def user_problem(request):
     return render(request, 'user_problem.html')
