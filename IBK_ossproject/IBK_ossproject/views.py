@@ -13,6 +13,7 @@ from .forms import FollowForm, MessageForm
 from django.db.models import Q
 from .models import BlogPost
 from .forms import BlogPostForm
+import requests
 import random
 import string
 
@@ -100,15 +101,15 @@ def add_friend(request):
 @login_required
 def blog_create(request):
     if request.method == 'POST':
-        form = BlogPostForm(request.POST, request.FILES)
+        form = BlogPostForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            blog_post = form.save(commit=False)
-            blog_post.author = request.user
-            blog_post.save()
+            form.save()
             return redirect('blog_post')
     else:
-        form = BlogPostForm()
-    return render(request, 'blog_creation.html', {'form': form})
+        form = BlogPostForm(user=request.user)
+
+    return render(request, 'blog_create.html', {'form': form})
+
 
 def blog_post(request):
     blog_posts = BlogPost.objects.all().order_by('-created_at')
@@ -238,3 +239,42 @@ def find_id_result(request):
 
 def findpassword_result(request):  # 변경된 함수 이름
     return render(request, 'findpassword_result.html')
+
+def leetcode_question_bank(request):
+    url = "https://leetcode.com/graphql/"
+    headers = {
+        "Content-Type": "application/json",
+        "Referer": "https://leetcode.com",
+    }
+
+    query = """
+    {
+        problemsetQuestionList(
+            categorySlug: ""
+            limit: 10
+            skip: 0
+            filters: {}
+        ) {
+            total
+            questions {
+                title
+                titleSlug
+                difficulty
+                topicTags {
+                    name
+                }
+            }
+        }
+    }
+    """
+    
+    response = requests.post(url, json={"query": query}, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        problems = data.get("data", {}).get("problemsetQuestionList", {}).get("questions", [])
+    else:
+        problems = []
+
+    # 템플릿으로 문제 데이터를 전달
+    return render(request, 'leetcode-question-bank.html', {'problems': problems})

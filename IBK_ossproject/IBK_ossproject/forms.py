@@ -20,18 +20,20 @@ class MessageForm(forms.Form):
 class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
-        fields = ['title', 'category', 'content', 'image']
-
+        fields = ['title', 'content', 'image']
+        
         widgets = {
             'content': forms.Textarea(attrs={'rows': 5}),
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
+        self.user = kwargs.pop('user', None)  # user를 kwargs에서 꺼내옵니다.
         super(BlogPostForm, self).__init__(*args, **kwargs)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if self.instance and self.instance.author != self.user:
-            raise forms.ValidationError("You are not allowed to edit this post.")
-        return cleaned_data
+    def save(self, commit=True):
+        instance = super(BlogPostForm, self).save(commit=False)
+        if self.user:
+            instance.author = self.user  # author를 현재 사용자로 설정합니다.
+        if commit:
+            instance.save()
+        return instance
