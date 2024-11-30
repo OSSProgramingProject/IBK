@@ -18,7 +18,8 @@
                 <div class="col-lg-20">
                     <div class="card shadow border-0">
                         <div class="card-body p-5">
-                            <form method="POST" action="{% url 'blog_creation' %}">
+                            <!-- 수정된 form 태그 -->
+                            <form method="POST" action="{% url 'blog_creation' %}" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="mb-3">
                                     <label for="title" class="form-label">제목</label>
@@ -54,4 +55,3 @@
         </div>
     </section>
 {% endblock %}
-
