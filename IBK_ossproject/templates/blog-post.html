@@ -15,8 +15,8 @@
 
     <!-- 페이지 내용 -->
     <div class="container">
-        
-             <!-- 검색 위젯 -->
+        <div class="row">
+            <!-- 검색 위젯 -->
             <div class="card mb-4">
                 <div class="card-header">검색</div>
                 <div class="card-body">
@@ -28,10 +28,11 @@
                     </form>
                 </div>
             </div>
-        <div class="row">
+
+            <!-- 메인 콘텐츠 -->
             <div class="col-lg-9">
                 <!-- 검색 결과 표시 -->
-                {% if query %}
+                {% if query and query.strip %}
                     <div class="my-4">
                         <h4 class="fw-bold">검색 결과: "{{ query }}"</h4>
                         {% if blog_posts %}
@@ -55,11 +56,9 @@
                             <p>검색 결과가 없습니다.</p>
                         {% endif %}
                     </div>
-                {% endif %}
-                
-                <!-- 기존 블로그 게시글 목록 -->
-                <div class="row">
-                    <div class="col-lg-9">
+                {% else %}
+                    <!-- 기본 블로그 게시글 목록 -->
+                    <div class="row">
                         {% for blog in blog_posts %}
                             <div class="card mb-4">
                                 {% if blog.image %}
@@ -76,10 +75,11 @@
                             <p>게시글이 없습니다.</p>
                         {% endfor %}
                     </div>
-                </div>
+                {% endif %}
             </div>
+
+            <!-- 사이드바 -->
             <div class="col-lg-3">
-                <!--사이드 바-->
                 <!-- 카테고리 위젯 -->
                 <div class="card mb-4">
                     <div class="card-header">카테고리</div>
