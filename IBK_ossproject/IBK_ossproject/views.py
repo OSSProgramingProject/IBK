@@ -1,6 +1,5 @@
-# views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import UserProfile
+from .models import UserProfile, Post, Problem
 from django.contrib import messages
 from .forms import UserRegisterForm
 from django.contrib.auth import authenticate, login as auth_login
@@ -9,6 +8,7 @@ from django.contrib.auth import logout as auth_logout
 from django.core.mail import send_mail
 import random
 import string
+from django.http import JsonResponse
 
 # 기존 뷰 함수들
 def home(request):
@@ -50,7 +50,7 @@ def profile_management(request):
     context = {
         'user_profile': user_profile,
         'user_name': request.user.username,
-        'solved_problems': user_profile.solved_problems,
+        'solved_problems': user_profile.solved_problems if user_profile else '',
     }
     return render(request, 'profile-management.html', context)
 
@@ -105,7 +105,7 @@ def generate_temp_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for i in range(length))
 
-def findpassword(request):  # 변경된 함수 이름
+def findpassword(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         username = request.POST.get('username')
@@ -127,20 +127,45 @@ def findpassword(request):  # 변경된 함수 이름
                 send_mail(subject, message, from_email, recipient_list)
 
                 messages.success(request, '임시 비밀번호가 이메일로 전송되었습니다.')
-                return redirect('findpassword_result')  # 수정된 URL 이름으로 변경
+                return redirect('findpassword_result')
 
             else:
                 messages.error(request, '아이디와 이메일이 일치하지 않습니다.')
-                return redirect('findpassword')  # 수정된 URL 이름으로 변경
+                return redirect('findpassword')
 
         except UserProfile.DoesNotExist:
             messages.error(request, '해당 이메일을 사용하는 계정을 찾을 수 없습니다.')
-            return redirect('findpassword')  # 수정된 URL 이름으로 변경
+            return redirect('findpassword')
 
-    return render(request, 'findpassword.html')  # 수정된 템플릿 파일명
+    return render(request, 'findpassword.html')
 
 def find_id_result(request):
     return render(request, 'findid_result.html')
 
-def findpassword_result(request):  # 변경된 함수 이름
+def findpassword_result(request):
     return render(request, 'findpassword_result.html')
+
+def qa_board(request):
+    return render(request, 'qa-board.html')
+
+def resources_board(request):
+    return render(request, 'resources-board.html')
+
+# 문제 목록 보기
+def problem_list(request):
+    problems = Problem.objects.all()
+    return render(request, 'problems/problem_list.html', {'problems': problems})
+
+# 특정 문제 보기
+def problem_detail(request, problem_id):
+    problem = get_object_or_404(Problem, id=problem_id)
+    return JsonResponse({
+        'id': problem.id,
+        'title': problem.title,
+        'description': problem.description,
+        'options': problem.options.split(', ') if problem.options else [],
+        'category': problem.category,
+        'difficulty': problem.difficulty,
+        'tags': problem.tags,
+        'image_path': problem.image_path.url if problem.image_path else None,
+    })

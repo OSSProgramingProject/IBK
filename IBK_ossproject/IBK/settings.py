@@ -39,7 +39,7 @@ ROOT_URLCONF = 'IBK.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # 템플릿 폴더 경로 추가
+        'DIRS': [BASE_DIR / 'templates'],  # 템플릿 루트 디렉토리
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -51,7 +51,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'IBK.wsgi.application'
 
 # Database configuration
