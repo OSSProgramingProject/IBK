@@ -175,6 +175,12 @@ def post_detail(request, id):
     post = get_object_or_404(Post, id=id)
     return render(request, 'post_detail.html', {'post': post})
 
+def blog_search(request):
+    query = request.GET.get('q')
+    blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
+
+    return render(request, 'blog_post.html', {'blog_posts': blog_posts, 'query': query})
+
 def find_id(request):
     if request.method == 'POST':
         email = request.POST.get('email')

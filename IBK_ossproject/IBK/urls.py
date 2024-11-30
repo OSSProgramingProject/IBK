@@ -29,6 +29,7 @@ urlpatterns = [
     path('blog_creat/', views.blog_create, name='blog_creation'),  # 블로그 작성 페이지
     path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
     path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
+    path('blog/search/', views.blog_search, name='blog_search'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:

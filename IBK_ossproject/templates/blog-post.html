@@ -15,73 +15,71 @@
 
     <!-- 페이지 내용 -->
     <div class="container">
+        
+             <!-- 검색 위젯 -->
+            <div class="card mb-4">
+                <div class="card-header">검색</div>
+                <div class="card-body">
+                    <form method="GET" action="{% url 'blog_search' %}">
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="q" placeholder="검색어를 입력하세요..." value="{{ query|default_if_none:'' }}">
+                            <button class="btn btn-primary" type="submit">검색</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         <div class="row">
-            <!-- 블로그 게시물 -->
-            <div class="col-lg-8">
-                <!-- 주요 블로그 게시물 -->
-                <div class="col-lg-8">
-                    {% if blog_posts %}
+            <div class="col-lg-9">
+                <!-- 검색 결과 표시 -->
+                {% if query %}
+                    <div class="my-4">
+                        <h4 class="fw-bold">검색 결과: "{{ query }}"</h4>
+                        {% if blog_posts %}
+                            <div class="row gx-5">
+                                {% for blog in blog_posts %}
+                                    <div class="col-lg-6 mb-4">
+                                        <div class="card">
+                                            {% if blog.image %}
+                                                <img class="card-img-top" src="{{ blog.image.url }}" alt="{{ blog.title }}">
+                                            {% endif %}
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ blog.title }}</h5>
+                                                <p class="card-text">{{ blog.content|truncatechars:100 }}</p>
+                                                <a href="{% url 'blog_detail' blog.pk %}" class="btn btn-primary">자세히 보기</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p>검색 결과가 없습니다.</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+                <!-- 기존 블로그 게시글 목록 -->
+                <div class="row">
+                    <div class="col-lg-9">
                         {% for blog in blog_posts %}
                             <div class="card mb-4">
                                 {% if blog.image %}
-                                    <a href="#!"><img class="card-img-top" src="{{ blog.image.url }}" alt="블로그 이미지" /></a>
+                                    <img class="card-img-top" src="{{ blog.image.url }}" alt="...">
                                 {% endif %}
                                 <div class="card-body">
                                     <div class="small text-muted">{{ blog.created_at|date:"Y년 m월 d일" }}</div>
                                     <h2 class="card-title">{{ blog.title }}</h2>
                                     <p class="card-text">{{ blog.content|truncatechars:100 }}</p>
                                     <a class="btn btn-primary" href="{% url 'blog_detail' blog.pk %}">자세히 보기 →</a>
-                                    <!-- 수정 버튼을 각 게시글 카드 내부에 추가 -->
-                                    {% if blog.author == user %}
-                                        <a class="btn btn-warning" href="{% url 'blog_edit' blog.pk %}">수정</a>
-                                    {% endif %}
-
                                 </div>
                             </div>
+                        {% empty %}
+                            <p>게시글이 없습니다.</p>
                         {% endfor %}
-                    {% else %}
-                        <p>게시된 블로그 글이 없습니다.</p>
-                    {% endif %}
+                    </div>
                 </div>
-
-                <!-- 추가 블로그 게시물 -->
-                <!--div class="row">
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
-                            <div class="card-body">
-                                <div class="small text-muted">2023년 1월 1일</div>
-                                <h2 class="card-title h4">게시물 제목</h2>
-                                <p class="card-text">다양한 주제를 포함하는 일반 게시물입니다.</p>
-                                <a class="btn btn-primary" href="#!">자세히 보기 →</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
-                            <div class="card-body">
-                                <div class="small text-muted">2023년 1월 1일</div>
-                                <h2 class="card-title h4">게시물 제목</h2>
-                                <p class="card-text">블로그에서 공유할 다양한 자료를 올려보세요.</p>
-                                <a class="btn btn-primary" href="#!">자세히 보기 →</a>
-                            </div>
-                        </div>
-                    </div>
-                </div-->
             </div>
-            <!-- 사이드바 -->
-            <div class="col-lg-4">
-                <!-- 검색 위젯 -->
-                <div class="card mb-4">
-                    <div class="card-header">검색</div>
-                    <div class="card-body">
-                        <div class="input-group">
-                            <input class="form-control" type="text" placeholder="검색어를 입력하세요..." />
-                            <button class="btn btn-primary" type="button">검색</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-lg-3">
+                <!--사이드 바-->
                 <!-- 카테고리 위젯 -->
                 <div class="card mb-4">
                     <div class="card-header">카테고리</div>
