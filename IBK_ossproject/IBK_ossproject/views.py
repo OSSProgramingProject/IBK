@@ -179,7 +179,7 @@ def blog_search(request):
     query = request.GET.get('q')
     blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
 
-    return render(request, 'blog_post.html', {'blog_posts': blog_posts, 'query': query})
+    return render(request, 'blog-post.html', {'blog_posts': blog_posts, 'query': query})
 
 def find_id(request):
     if request.method == 'POST':
