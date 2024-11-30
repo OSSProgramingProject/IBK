@@ -8,7 +8,12 @@ from django.contrib.auth import logout as auth_logout
 from django.core.mail import send_mail
 import random
 import string
+<<<<<<< Updated upstream
 from django.http import JsonResponse
+=======
+from .models import Problem
+from .forms import ProblemForm
+>>>>>>> Stashed changes
 
 # 기존 뷰 함수들
 def home(request):
@@ -54,6 +59,119 @@ def profile_management(request):
     }
     return render(request, 'profile-management.html', context)
 
+<<<<<<< Updated upstream
+=======
+
+
+@login_required
+def create_problem(request):
+    if request.method == 'POST':
+        form = ProblemForm(request.POST, request.FILES)
+        if form.is_valid():
+            problem = form.save(commit=False)
+            problem.author = request.user
+            problem.save()
+            return redirect('user_problems', pk=problem.pk)
+    else:
+        form = ProblemForm()
+    return render(request, 'problem-creation.html', {'form': form})
+
+
+
+@login_required
+def user_problems(request):
+    user_problems = Problem.objects.filter(author=request.user).order_by('-created_at')
+    return render(request, 'user_problem.html', {'user_problems': user_problems})
+
+def problem_detail(request, problem_id):
+    problem = get_object_or_404(Problem, pk=problem_id)
+    return render(request, 'problem.html', {'problem': problem})
+
+
+def follow_user(request):
+    if request.method == 'POST':
+        form = FollowForm(request.POST)
+        if form.is_valid():
+            user_to_follow = get_object_or_404(User, username=form.cleaned_data['user_to_follow'])
+            Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
+            return redirect('profile_management')
+    return redirect('profile_management')
+
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            receiver = get_object_or_404(User, username=form.cleaned_data['receiver'])
+            content = form.cleaned_data['content']
+            Message.objects.create(sender=request.user, receiver=receiver, content=content)
+            return redirect('profile_management')
+    return redirect('profile_management')
+
+@login_required
+def add_friend(request):
+    if request.method == 'POST':
+        friend_username = request.POST.get('friend_username')
+        if friend_username:
+            friend_user = get_object_or_404(User, username=friend_username)
+            # 이미 친구 관계가 있는지 확인
+            if not Friendship.objects.filter(user1=request.user, user2=friend_user).exists():
+                # 친구 관계 생성
+                Friendship.objects.create(user1=request.user, user2=friend_user)
+                messages.success(request, f'{friend_user.username}님과 친구가 되었습니다.')
+            else:
+                messages.info(request, '이미 친구 관계입니다.')
+        else:
+            messages.error(request, '잘못된 사용자 이름입니다.')
+
+    return redirect('profile_management')
+
+@login_required
+def blog_create(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_post')
+    else:
+        form = BlogPostForm(user=request.user)
+
+    return render(request, 'blog_creation.html', {'form': form})
+
+
+def blog_post(request):
+    blog_posts = BlogPost.objects.all().order_by('-created_at')
+    return render(request, 'blog-post.html', {'blog_posts': blog_posts})
+
+def blog_detail(request, pk):
+    blog = get_object_or_404(BlogPost, pk=pk)
+    return render(request, 'blog_detail.html', {'blog': blog})
+
+@login_required
+def blog_edit(request, pk):
+    # 블로그 게시글 가져오기
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+
+    # 현재 사용자가 게시글 작성자인지 확인
+    if blog_post.author != request.user:
+        messages.error(request, "You are not authorized to edit this blog post.")
+        return redirect('blog_post')  # 사용자에게 권한이 없을 경우 게시글 목록으로 리디렉션
+
+    # 폼 생성
+    if request.method == 'POST':
+        # POST 요청 시 폼을 작성하고 유효성을 검사합니다.
+        form = BlogPostForm(request.POST, instance=blog_post, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Blog post updated successfully.")
+            return redirect('blog_detail', pk=blog_post.pk)
+    else:
+        # GET 요청 시 작성된 내용이 미리 채워진 폼을 표시합니다.
+        form = BlogPostForm(instance=blog_post, user=request.user)
+
+    # 폼을 렌더링합니다.
+    return render(request, 'IBK_ossproject/blog_edit.html', {'form': form, 'blog_post': blog_post})
+
+>>>>>>> Stashed changes
 def user_problem(request):
     return render(request, 'user_problem.html')
 

@@ -33,23 +33,28 @@
             <div class="row gx-5">
                 <div class="col-xl-8">
                     <h2 class="fw-bolder fs-5 mb-4">작성 문제 목록</h2>
-                    <div class="mb-4">
-                        <div class="small text-muted">2023년 5월 12일</div>
-                        <a class="link-dark" href="#"><h3>새로운 문제 작성 - 배열 처리 문제</h3></a>
-                    </div>
-                    <div class="mb-5">
-                        <div class="small text-muted">2023년 5월 5일</div>
-                        <a class="link-dark" href="#"><h3>정렬 알고리즘 문제: 퀵소트 구현하기</h3></a>
-                    </div>
-                    <div class="mb-5">
-                        <div class="small text-muted">2023년 4월 21일</div>
-                        <a class="link-dark" href="#"><h3>문자열 분석 문제 - 회문 체크</h3></a>
-                    </div>
-                    <div class="text-end mb-5 mb-xl-0">
-                        <a class="text-decoration-none" href="#">
-                            더 많은 문제 보기
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
+                    <div class="container py-5">
+                        <h1>작성한 문제들</h1>
+                        {% if user_problems %}
+                            <div class="row">
+                                {% for problem in user_problems %}
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card">
+                                            {% if problem.image %}
+                                                <img src="{{ problem.image.url }}" class="card-img-top" alt="{{ problem.title }}">
+                                            {% endif %}
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ problem.title }}</h5>
+                                                <p class="card-text">{{ problem.description|truncatewords:15 }}</p>
+                                                <a href="{% url 'problem_detail' problem.id %}" class="btn btn-primary">상세보기</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p>작성한 문제가 없습니다.</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-xl-4">

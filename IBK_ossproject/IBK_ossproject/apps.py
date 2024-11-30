@@ -14,6 +14,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 db = SQLAlchemy(app)
 
 # 데이터베이스 모델 정의
+<<<<<<< Updated upstream
 class Problem(db.Model):
     id = db.Column(db.Integer, primary_key=True) # 고유 ID
     title = db.Column(db.String(100), nullable=False)   # 문제 제목
@@ -88,6 +89,9 @@ def get_problems():
             'tags': problem.tags
         })
     return jsonify(problems_data)
+=======
+
+>>>>>>> Stashed changes
 
 @app.route('/problem/<int:problem_id>', methods=['GET'])
 def get_problem(problem_id):

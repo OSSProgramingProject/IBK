@@ -23,9 +23,23 @@ urlpatterns = [
     path('findpassword-result/', views.findpassword_result, name='findpassword_result'),  # 비밀번호 찾기 결과 페이지
     path('profile/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
     path('admin/', admin.site.urls), #관리자 페이지 경로 설정
+<<<<<<< Updated upstream
     path('qa-board/', views.qa_board, name='qa-board'), # QnA 게시판
     path('resources-board/', views.resources_board, name='resources-board'), # 자료 게시판
     path('IBK_ossproject/', include('IBK_ossproject.urls')) # IBK_ossproject 앱의 URL 연결
+=======
+    path('follow/', views.follow_user, name='follow_user'),
+    path('send_message/', views.send_message, name='send_message'),
+    path('add_friend/', views.add_friend, name='add_friend'),
+    path('blog_creat/', views.blog_create, name='blog_creation'),  # 블로그 작성 페이지
+    path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
+    path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
+    path('blog/search/', views.blog_search, name='blog_search'),
+    path('problems/create/', views.create_problem, name='create_problem'),  # 문제 작성
+    path('user/problems/', views.user_problems, name='user_problems'),     # 작성 문제 목록
+    path('problems/<int:problem_id>/', views.problem_detail, name='problem_detail'),  # 문제 상세보기
+    
+>>>>>>> Stashed changes
 
 
 

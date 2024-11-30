@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}{{ problem.title }} - 문제 상세{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>{{ problem.title }}</h1>
+    <p><strong>작성자:</strong> {{ problem.author.username }}</p>
+    <p><strong>작성일:</strong> {{ problem.created_at|date:"Y년 m월 d일" }}</p>
+    {% if problem.image %}
+        <img src="{{ problem.image.url }}" alt="문제 이미지" class="img-fluid mb-4" />
+    {% endif %}
+    <p>{{ problem.description }}</p>
+    <h3>선택지</h3>
+    <ul>
+        {% for option in problem.options %}
+            <li>{{ option }}</li>
+        {% empty %}
+            <li>선택지가 없습니다.</li>
+        {% endfor %}
+    </ul>
+    <p><strong>난이도:</strong> {{ problem.get_difficulty_display }}</p>
+    <p><strong>태그:</strong> {{ problem.tags }}</p>
+</div>
+{% endblock %}
