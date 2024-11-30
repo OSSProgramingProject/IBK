@@ -25,11 +25,18 @@ urlpatterns = [
     path('admin/', admin.site.urls), #관리자 페이지 경로 설정
     path('qa-board/', views.qa_board, name='qa-board'), # QnA 게시판
     path('resources-board/', views.resources_board, name='resources-board'), # 자료 게시판
+    path('follow/', views.follow_user, name='follow_user'),
+    path('send_message/', views.send_message, name='send_message'),
+    path('add_friend/', views.add_friend, name='add_friend'),
+    path('blog_creat/', views.blog_create, name='blog_creation'),  # 블로그 작성 페이지
+    path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
+    path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
+    path('blog/search/', views.blog_search, name='blog_search'),
 
 
 
     
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     #urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

@@ -20,6 +20,6 @@ urlpatterns = [
     path('profile/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
     path('qa-board/', views.qa_board, name='qa-board'), # QnA 게시판
     path('resources-board/', views.resources_board, name='resources-board'), # 자료 게시판
-
+    path('add_friend/', views.add_friend, name='add_friend'),
 
 ]

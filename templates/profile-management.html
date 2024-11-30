@@ -87,7 +87,7 @@
                 <div class="mb-5">
                     <h2 class="fw-bolder mb-4">Social</h2>
                     <div class="row">
-                        <!-- Followed Users -->
+                        <!-- Followed Users >
                         <div class="col-lg-6">
                             <h4 class="fw-bold">Following</h4>
                             <ul class="list-group mb-3">
@@ -99,22 +99,49 @@
                                     <span>user_abc</span>
                                     <button class="btn btn-sm btn-outline-danger">Unfollow</button>
                                 </li>
-                            </ul>
-                        </div>
+                            </ul-->
+                            <!-- Follow Form >
+                            <form method="POST" action="{% url 'follow_user' %}">
+                                {% csrf_token %}
+                                <input type="text" name="user_to_follow" placeholder="Enter username to follow" class="form-control mb-2">
+                                <button type="submit" class="btn btn-outline-success">Follow</button>
+                            </form>
+                        </div-->
                         <!-- Friends List -->
                         <div class="col-lg-6">
                             <h4 class="fw-bold">Friends</h4>
+                            <form method="POST" action="{% url 'add_friend' %}">
+                                {% csrf_token %}
+                                <input type="text" name="friend_username" class="form-control" placeholder="Enter username to add as friend">
+                                <button type="submit" class="btn btn-outline-success mt-3">Add Friend</button>
+                            </form>
+
                             <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>friend_user1</span>
-                                    <button class="btn btn-sm btn-outline-secondary">Message</button>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>friend_user2</span>
-                                    <button class="btn btn-sm btn-outline-secondary">Message</button>
-                                </li>
+                                {% for friendship in friends %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            {% if friendship.user1 == request.user %}
+                                                {{ friendship.user2.username }}
+                                            {% else %}
+                                                {{ friendship.user1.username }}
+                                            {% endif %}
+                                        </span>
+                                        <button class="btn btn-sm btn-outline-secondary">Message</button>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item">You have no friends added yet.</li>
+                                {% endfor %}
                             </ul>
-                            <button class="btn btn-outline-success mt-3">Add Friend</button>
+                        </div>
+                        <!-- Send Message Form -->
+                        <div class="col-lg-6">
+                            <h4 class="fw-bold">Send Message</h4>
+                            <form method="POST" action="{% url 'send_message' %}" class="mt-3">
+                                {% csrf_token %}
+                                <input type="text" name="receiver" placeholder="Enter username" class="form-control mb-2">
+                                <textarea name="content" placeholder="Enter your message" class="form-control mb-2"></textarea>
+                                <button type="submit" class="btn btn-outline-secondary">Send Message</button>
+                            </form>
                         </div>
                     </div>
                 </div>

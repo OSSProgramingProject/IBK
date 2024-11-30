@@ -11,6 +11,8 @@ ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = 'home'  # 로그인 성공 후 이동할 페이지
 LOGOUT_REDIRECT_URL = 'home'  # 로그아웃 후 이동할 페이지
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Application definition
 INSTALLED_APPS = [

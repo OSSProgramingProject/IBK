@@ -7,6 +7,10 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from .models import Follow, Friendship, Message, BlogPost
+from .forms import FollowForm, MessageForm, BlogPostForm
+from django.db.models import Q
 import random
 import string
 
@@ -38,21 +42,101 @@ def profile_management(request):
         user_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         user_profile = None
-    
+
     if request.method == "POST":
         request.user.username = request.POST.get('user_name')
         request.user.save()
         user_profile.solved_problems = request.POST.get('solved_problems')
         user_profile.save()
-
         return redirect('profile_management')
 
     context = {
         'user_profile': user_profile,
         'user_name': request.user.username,
-        'solved_problems': user_profile.solved_problems,
+        'solved_problems': user_profile.solved_problems if user_profile else None,
+        'friends': Friendship.objects.filter(Q(user1=request.user) | Q(user2=request.user)),
     }
     return render(request, 'profile-management.html', context)
+
+def follow_user(request):
+    if request.method == 'POST':
+        form = FollowForm(request.POST)
+        if form.is_valid():
+            user_to_follow = get_object_or_404(User, username=form.cleaned_data['user_to_follow'])
+            Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
+            return redirect('profile_management')
+    return redirect('profile_management')
+
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            receiver = get_object_or_404(User, username=form.cleaned_data['receiver'])
+            content = form.cleaned_data['content']
+            Message.objects.create(sender=request.user, receiver=receiver, content=content)
+            return redirect('profile_management')
+    return redirect('profile_management')
+
+@login_required
+def add_friend(request):
+    if request.method == 'POST':
+        friend_username = request.POST.get('friend_username')
+        if friend_username:
+            friend_user = get_object_or_404(User, username=friend_username)
+            if not Friendship.objects.filter(user1=request.user, user2=friend_user).exists():
+                Friendship.objects.create(user1=request.user, user2=friend_user)
+                messages.success(request, f'{friend_user.username}님과 친구가 되었습니다.')
+            else:
+                messages.info(request, '이미 친구 관계입니다.')
+        else:
+            messages.error(request, '잘못된 사용자 이름입니다.')
+
+    return redirect('profile_management')
+
+@login_required
+def blog_create(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_post')
+    else:
+        form = BlogPostForm(user=request.user)
+
+    return render(request, 'blog_creation.html', {'form': form})
+
+
+def blog_post(request):
+    blog_posts = BlogPost.objects.all().order_by('-created_at')
+    return render(request, 'blog-post.html', {'blog_posts': blog_posts})
+
+def blog_detail(request, pk):
+    blog = get_object_or_404(BlogPost, pk=pk)
+    return render(request, 'blog_detail.html', {'blog': blog})
+
+@login_required
+def blog_edit(request, pk):
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+
+    if blog_post.author != request.user:
+        messages.error(request, "You are not authorized to edit this blog post.")
+        return redirect('blog_post')
+
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, instance=blog_post, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Blog post updated successfully.")
+            return redirect('blog_detail', pk=blog_post.pk)
+    else:
+        form = BlogPostForm(instance=blog_post, user=request.user)
+
+    return render(request, 'blog_edit.html', {'form': form, 'blog_post': blog_post})
+
+def blog_search(request):
+    query = request.GET.get('q')
+    blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
+    return render(request, 'blog-post.html', {'blog_posts': blog_posts, 'query': query})
 
 def user_problem(request):
     return render(request, 'user_problem.html')
@@ -66,14 +150,11 @@ def question_bank(request):
 def community(request):
     return render(request, 'community.html')
 
-def blog_post(request):
-    return render(request, 'blog-post.html')
-
 def signup(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save() 
+            form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'계정이 생성되었습니다. {username}님, 로그인하세요.')
             return redirect('login')
@@ -105,7 +186,7 @@ def generate_temp_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for i in range(length))
 
-def findpassword(request):  # 변경된 함수 이름
+def findpassword(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         username = request.POST.get('username')
@@ -127,22 +208,22 @@ def findpassword(request):  # 변경된 함수 이름
                 send_mail(subject, message, from_email, recipient_list)
 
                 messages.success(request, '임시 비밀번호가 이메일로 전송되었습니다.')
-                return redirect('findpassword_result')  # 수정된 URL 이름으로 변경
+                return redirect('findpassword_result')
 
             else:
                 messages.error(request, '아이디와 이메일이 일치하지 않습니다.')
-                return redirect('findpassword')  # 수정된 URL 이름으로 변경
+                return redirect('findpassword')
 
         except UserProfile.DoesNotExist:
             messages.error(request, '해당 이메일을 사용하는 계정을 찾을 수 없습니다.')
-            return redirect('findpassword')  # 수정된 URL 이름으로 변경
+            return redirect('findpassword')
 
-    return render(request, 'findpassword.html')  # 수정된 템플릿 파일명
+    return render(request, 'findpassword.html')
 
 def find_id_result(request):
     return render(request, 'findid_result.html')
 
-def findpassword_result(request):  # 변경된 함수 이름
+def findpassword_result(request):
     return render(request, 'findpassword_result.html')
 
 def qa_board(request):
