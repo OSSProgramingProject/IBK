@@ -108,7 +108,7 @@ def blog_create(request):
     else:
         form = BlogPostForm(user=request.user)
 
-    return render(request, 'blog_create.html', {'form': form})
+    return render(request, 'blog_creation.html', {'form': form})
 
 
 def blog_post(request):
@@ -239,42 +239,3 @@ def find_id_result(request):
 
 def findpassword_result(request):  # 변경된 함수 이름
     return render(request, 'findpassword_result.html')
-
-def leetcode_question_bank(request):
-    url = "https://leetcode.com/graphql/"
-    headers = {
-        "Content-Type": "application/json",
-        "Referer": "https://leetcode.com",
-    }
-
-    query = """
-    {
-        problemsetQuestionList(
-            categorySlug: ""
-            limit: 10
-            skip: 0
-            filters: {}
-        ) {
-            total
-            questions {
-                title
-                titleSlug
-                difficulty
-                topicTags {
-                    name
-                }
-            }
-        }
-    }
-    """
-    
-    response = requests.post(url, json={"query": query}, headers=headers)
-    
-    if response.status_code == 200:
-        data = response.json()
-        problems = data.get("data", {}).get("problemsetQuestionList", {}).get("questions", [])
-    else:
-        problems = []
-
-    # 템플릿으로 문제 데이터를 전달
-    return render(request, 'leetcode-question-bank.html', {'problems': problems})
