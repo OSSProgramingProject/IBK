@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}문제 상세 - {{ problem.name }}{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xxl-6">
+                <div class="text-center my-5">
+                    <h1 class="fw-bolder mb-3">{{ problem.contestId }} - {{ problem.index }}: {{ problem.name }}</h1>
+                    <p class="lead fw-normal text-muted mb-4">Tags: {{ problem.tags|join:", " }}</p>
+                    <p><strong>Type:</strong> {{ problem.type }}</p>
+                    {% if problem.rating %}
+                        <p><strong>Difficulty:</strong> {{ problem.rating }}</p>
+                    {% else %}
+                        <p><strong>Difficulty:</strong> Not Rated</p>
+                    {% endif %}
+                </div>
+                <div class="text-center">
+                    <a href="{% url 'question-bank' %}" class="btn btn-secondary">Back to Question Bank</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

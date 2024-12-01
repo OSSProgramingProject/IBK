@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- 페이지 헤더 -->
+    <header class="py-5 bg-light border-bottom mb-4">
+        <div class="container">
+            <div class="text-center my-5">
+                <h1 id="header-title" class="fw-bolder editable" contenteditable="false">작성한 문제 목록</h1>
+                <p id="header-description" class="lead mb-0 editable" contenteditable="false">여기에서 내가 작성한 문제와 해결한 문제들을 볼 수 있습니다.</p>
+                <a id="header-button" href="{% url 'problem_creation' %}" class="btn btn-primary mt-3">문제 작성하기</a>
+                <button id="save-header-button" class="btn btn-success mt-3 d-none">저장</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 페이지 내용 -->
+    <div class="container">
+        <div class="row">
+            <!-- 메인 콘텐츠 -->
+            <div class="col-lg-9">
+                <!-- 기본 문제 목록 표시 -->
+                <div class="row">
+                    <h3>내가 작성한 문제들</h3>
+                    {% for problem in user_problems %}
+                        <div class="card mb-4">
+                            {% if problem.image %}
+                                <img class="card-img-top" src="{{ problem.image.url }}" alt="{{ problem.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="small text-muted">{{ problem.created_at|date:"Y년 m월 d일" }}</div>
+                                <h2 class="card-title">{{ problem.title }}</h2>
+                                <p class="card-text">{{ problem.description|truncatechars:100 }}</p>
+                                <a class="btn btn-primary" href="{% url 'problem_detail' problem.pk %}">자세히 보기 →</a>
+                                {% if problem.author == user %}
+                                    <a href="{% url 'problem_edit' problem.pk %}" class="btn btn-warning">수정</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>작성한 문제가 없습니다.</p>
+                    {% endfor %}
+                </div>
+
+                <hr>
+                
+                <!-- 해결한 문제 목록 표시 -->
+                <div class="row">
+                    <h3>내가 해결한 문제들</h3>
+                    {% for solved_problem in solved_problems %}
+                        <div class="card mb-4">
+                            {% if solved_problem.image %}
+                                <img class="card-img-top" src="{{ solved_problem.image.url }}" alt="{{ solved_problem.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="small text-muted">{{ solved_problem.solved_at|date:"Y년 m월 d일" }}</div>
+                                <h2 class="card-title">{{ solved_problem.title }}</h2>
+                                <p class="card-text">{{ solved_problem.description|truncatechars:100 }}</p>
+                                <a class="btn btn-primary" href="{% url 'problem_detail' solved_problem.pk %}">자세히 보기 →</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>해결한 문제가 없습니다.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 사이드바 -->
+            <div class="col-lg-3">
+                <!-- 카테고리 위젯 -->
+                <div class="card mb-4">
+                    <div class="card-header">카테고리</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li><a href="#!">알고리즘</a></li>
+                                    <li><a href="#!">자료 구조</a></li>
+                                    <li><a href="#!">수학 문제</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li><a href="#!">Python</a></li>
+                                    <li><a href="#!">JavaScript</a></li>
+                                    <li><a href="#!">C++</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 작성하기 버튼 -->
+                <div class="card mb-4">
+                    <div class="card-header">문제 작성하기</div>
+                    <div class="card-body">
+                        <a href="{% url 'problem_creation' %}" class="btn btn-primary">문제 작성하기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // 요소 선택
+        const headerTitle = document.getElementById('header-title');
+        const headerDescription = document.getElementById('header-description');
+        const saveButton = document.getElementById('save-header-button');
+
+        // 페이지 로드 시 로컬 스토리지에서 데이터 불러오기
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTitle = localStorage.getItem('headerTitle');
+            const savedDescription = localStorage.getItem('headerDescription');
+
+            if (savedTitle) headerTitle.textContent = savedTitle;
+            if (savedDescription) headerDescription.textContent = savedDescription;
+        });
+
+        // 저장 버튼 클릭 시
+        saveButton.addEventListener('click', () => {
+            headerTitle.contentEditable = "false";
+            headerDescription.contentEditable = "false";
+            saveButton.classList.add('d-none');
+
+            // 로컬 스토리지에 저장
+            localStorage.setItem('headerTitle', headerTitle.textContent);
+            localStorage.setItem('headerDescription', headerDescription.textContent);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- 블로그 게시글 상세보기 섹션 -->
+    <section class="py-5">
+        <div class="container px-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h1 class="fw-bolder mb-4 text-primary">{{ blog.title }}</h1>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="small text-muted">작성자: <strong>{{ blog.author.username }}</strong> | 작성일: {{ blog.created_at|date:"Y년 m월 d일 H:i" }}</div>
+                                <div class="badge bg-secondary text-white">{{ blog.category }}</div>
+                            </div>
+                            {% if blog.image %}
+                                <img class="img-fluid rounded mb-4" src="{{ blog.image.url }}" alt="블로그 이미지">
+                            {% endif %}
+                            <p class="fs-5 mb-4">{{ blog.content }}</p>
+                            <div class="d-flex justify-content-end">
+                                <a href="{% url 'blog_post' %}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

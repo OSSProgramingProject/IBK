@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}문제 은행 - LeetCode{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">LeetCode Problem Bank</h2>
+            <p class="lead fw-normal text-muted">Browse LeetCode problems by difficulty, tags, and more.</p>
+        </div>
+        <div class="row">
+            {% for problem in problems %}
+                <div class="col-md-6 mb-4">
+                    <div class="card border p-4 rounded">
+                        <h5 class="fw-bolder">{{ problem.title }}</h5>
+                        <p class="text-muted">
+                            Difficulty: {{ problem.difficulty }}
+                        </p>
+                        <p>
+                            Tags: 
+                            {% for tag in problem.topicTags %}
+                                {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <a href="https://leetcode.com/problems/{{ problem.titleSlug }}/" class="btn btn-link" target="_blank">View Problem</a>
+                    </div>
+                </div>
+            {% endfor %}
+            {% empty %}
+                <p class="text-center">No problems found.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
