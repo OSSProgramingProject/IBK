@@ -20,8 +20,8 @@ class MessageForm(forms.Form):
 class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
-        fields = ['title', 'content', 'image']
-        
+        fields = ['title', 'category','content', 'image']
+
         widgets = {
             'content': forms.Textarea(attrs={'rows': 5}),
         }

@@ -1,5 +1,6 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import UserProfile
 from django.contrib import messages
 from .forms import UserRegisterForm
@@ -13,6 +14,7 @@ from .forms import FollowForm, MessageForm
 from django.db.models import Q
 from .models import BlogPost
 from .forms import BlogPostForm
+from django.core.paginator import Paginator
 import requests
 import random
 import string
@@ -132,7 +134,7 @@ def blog_edit(request, pk):
     # 폼 생성
     if request.method == 'POST':
         # POST 요청 시 폼을 작성하고 유효성을 검사합니다.
-        form = BlogPostForm(request.POST, instance=blog_post, user=request.user)
+        form = BlogPostForm(request.POST, request.FILES, instance=blog_post, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Blog post updated successfully.")
@@ -239,3 +241,29 @@ def find_id_result(request):
 
 def findpassword_result(request):  # 변경된 함수 이름
     return render(request, 'findpassword_result.html')
+
+def question_bank(request):
+    # API 요청 보내기
+    response = requests.get("https://codeforces.com/api/problemset.problems")
+    
+    if response.status_code == 200:
+        # 응답이 성공적이면 데이터를 JSON 형식으로 파싱
+        data = response.json()
+        problems_list = data.get("result", {}).get("problems", [])
+    else:
+        # 요청이 실패한 경우 빈 리스트로 설정
+        problems_list = []
+
+    # Django 모델을 사용하지 않으므로 problems_list를 바로 사용
+    paginator = Paginator(problems_list, 7)  # 한 페이지에 7개의 문제만 표시
+    
+    page = request.GET.get('page')
+    try:
+        problems = paginator.page(page)
+    except PageNotAnInteger:
+        problems = paginator.page(1)  # 페이지가 숫자가 아닐 경우 첫 페이지를 반환
+    except EmptyPage:
+        problems = paginator.page(paginator.num_pages)  # 빈 페이지 요청 시 마지막 페이지 반환
+
+    # 템플릿에 데이터를 전달하며 렌더링
+    return render(request, 'question-bank.html', {'problems': problems})
