@@ -178,7 +178,16 @@ def blog_search(request):
     return render(request, 'blog-post.html', {'blog_posts': blog_posts, 'query': query})
 
 def user_problem(request):
-    return render(request, 'user_problem.html')
+    # 사용자가 작성한 블로그 게시글 목록 가져오기
+    user_blogs = BlogPost.objects.filter(author=request.user)
+
+    # 템플릿에 전달할 데이터
+    context = {
+        'user_blogs': user_blogs,
+        'latest_post': BlogPost.objects.filter(visibility='public').last()  # 예시로 공개된 마지막 게시글을 가져옵니다.
+    }
+
+    return render(request, 'user_problem.html', context)
 
 def problem_creation(request):
     return render(request, 'problem-creation.html')
