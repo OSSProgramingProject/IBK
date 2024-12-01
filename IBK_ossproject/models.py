@@ -37,6 +37,11 @@ class BlogPost(models.Model):
     image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='public')  # 공개 여부 추가
+    # 문제 관련 필드 추가
+    contest_id = models.CharField(max_length=20, blank=True, null=True)
+    index = models.CharField(max_length=10, blank=True, null=True)
+    problem_name = models.CharField(max_length=200, blank=True, null=True)
+    tags = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.title

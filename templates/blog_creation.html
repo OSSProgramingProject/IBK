@@ -39,6 +39,11 @@
                                     <label for="problem" class="form-label">문제</label>
                                     <textarea class="form-control" id="problem" name="problem" rows="5" readonly>{{ form.initial.content }}</textarea>
                                 </div>
+                                <!-- 문제 정보를 숨겨진 필드로 추가해서 서버에 전달 -->
+                                <input type="hidden" name="contest_id" value="{{ contest_id }}">
+                                <input type="hidden" name="index" value="{{ index }}">
+                                <input type="hidden" name="problem_name" value="{{ problem_name }}">
+                                <input type="hidden" name="tags" value="{{ tags }}">
                                 <div class="d-grid gap-2 mt-3">
                                     <a href="https://codeforces.com/contest/{{ form.initial.contestId }}/problem/{{ form.initial.index }}" class="btn btn-primary" target="_blank">문제 바로가기</a>
                                 </div>

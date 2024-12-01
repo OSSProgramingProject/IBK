@@ -101,7 +101,16 @@ def blog_create(request):
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            form.save()
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+
+            # 문제 정보가 있으면 저장
+            blog_post.contest_id = request.POST.get('contest_id', '')
+            blog_post.index = request.POST.get('index', '')
+            blog_post.problem_name = request.POST.get('problem_name', '')
+            blog_post.tags = request.POST.get('tags', '')
+
+            blog_post.save()
             return redirect('blog_post')
     else:
         # 문제 풀기 버튼에서 넘어온 문제 정보 가져오기
@@ -118,7 +127,13 @@ def blog_create(request):
         # 초기 값을 포함한 폼 생성
         form = BlogPostForm(user=request.user, initial={'content': initial_content})
 
-    return render(request, 'blog_creation.html', {'form': form})
+    return render(request, 'blog_creation.html', {
+        'form': form,
+        'contest_id': contest_id,
+        'index': index,
+        'problem_name': name,
+        'tags': tags
+    })
 
 
 
@@ -167,9 +182,6 @@ def user_problem(request):
 
 def problem_creation(request):
     return render(request, 'problem-creation.html')
-
-def question_bank(request):
-    return render(request, 'question-bank.html')
 
 def community(request):
     return render(request, 'community.html')

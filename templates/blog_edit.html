@@ -24,6 +24,15 @@
                                     <option value="기타" {% if form.category.value == "기타" %}selected{% endif %}>기타</option>
                                 </select>
                             </div>
+                            <!-- 문제 정보 섹션 추가 -->
+                            {% if blog_post.problem_name %}
+                                <div class="mb-3">
+                                    <label for="problem" class="form-label">문제</label>
+                                    <textarea class="form-control" id="problem" name="problem" rows="5" readonly>Problem: {{ blog_post.contest_id }} - {{ blog_post.index }} ({{ blog_post.problem_name }})
+Tags : {{ blog_post.tags }}
+                                    </textarea>
+                                </div>
+                            {% endif %}
                             <div class="mb-3">
                                 {% if blog_post.image %}
                                     <div class="mb-3">
