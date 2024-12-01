@@ -103,9 +103,22 @@ def blog_create(request):
             form.save()
             return redirect('blog_post')
     else:
-        form = BlogPostForm(user=request.user)
+        # 문제 풀기 버튼에서 넘어온 문제 정보 가져오기
+        contest_id = request.GET.get('contestId', '')
+        index = request.GET.get('index', '')
+        name = request.GET.get('name', '')
+        tags = request.GET.get('tags', '')
+
+        # 문제 정보가 있다면 초기 내용 작성
+        initial_content = ""
+        if contest_id and index and name:
+            initial_content = f"Problem: {contest_id} - {index} ({name})\nTags: {tags}\n\nPlease describe your solution here..."
+
+        # 초기 값을 포함한 폼 생성
+        form = BlogPostForm(user=request.user, initial={'content': initial_content})
 
     return render(request, 'blog_creation.html', {'form': form})
+
 
 
 def blog_post(request):

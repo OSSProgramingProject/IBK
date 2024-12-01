@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="content" class="form-label">내용</label>
-                                    <textarea class="form-control" id="content" name="content" rows="15" placeholder="내용을 입력하세요" required></textarea>
+                                    <textarea class="form-control" id="content" name="content" rows="15" placeholder="내용을 입력하세요" required>{% if form.initial.content %}{{ form.initial.content }}{% endif %}</textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="image" class="form-label">이미지 첨부 (선택사항)</label>

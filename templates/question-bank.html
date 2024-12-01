@@ -14,16 +14,6 @@
             <!-- Problem Search Form-->
             <form id="problem-search-form" method="get" action="{% url 'question_bank' %}">
                 <div class="row gx-5">
-                    <!--div class="col-md-4 mb-3">
-                        <label for="categorySelect" class="form-label">Category</label>
-                        <select id="categorySelect" class="form-select" name="category">
-                            <option selected>All Categories</option>
-                            <option value="math">Math</option>
-                            <option value="science">Science</option>
-                            <option value="history">History</option>
-                            <option value="programming">Programming</option>
-                        </select>
-                    </div-->
                     <div class="col-md-6 mb-3">
                         <label for="difficultySelect" class="form-label">Difficulty</label>
                         <select id="difficultySelect" class="form-select" name="difficulty">
@@ -49,7 +39,11 @@
                         <h5 class="fw-bolder">{{ problem.contestId }} - {{ problem.index }}: {{ problem.name }}</h5>
                         <p class="text-muted">Category: Programming | Difficulty: {{ problem.rating }}</p>
                         <p>{{ problem.tags|join:", " }}</p>
-                        <a href="https://codeforces.com/contest/{{ problem.contestId }}/problem/{{ problem.index }}" class="btn btn-link" target="_blank">View Problem</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="https://codeforces.com/contest/{{ problem.contestId }}/problem/{{ problem.index }}" class="btn btn-link" target="_blank">View Problem</a>
+                            <a href="{% url 'blog_creation' %}?contestId={{ problem.contestId }}&index={{ problem.index }}&name={{ problem.name }}&tags={{ problem.tags|join:',' }}" class="btn btn-secondary ml-auto">문제 풀기</a>
+
+                        </div>
                     </div>
                 {% empty %}
                     <p class="text-center">No problems found.</p>
