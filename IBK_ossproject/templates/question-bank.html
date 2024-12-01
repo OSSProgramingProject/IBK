@@ -14,7 +14,7 @@
             <!-- Problem Search Form-->
             <form id="problem-search-form" method="get" action="{% url 'question_bank' %}">
                 <div class="row gx-5">
-                    <div class="col-md-4 mb-3">
+                    <!--div class="col-md-4 mb-3">
                         <label for="categorySelect" class="form-label">Category</label>
                         <select id="categorySelect" class="form-select" name="category">
                             <option selected>All Categories</option>
@@ -23,8 +23,8 @@
                             <option value="history">History</option>
                             <option value="programming">Programming</option>
                         </select>
-                    </div>
-                    <div class="col-md-4 mb-3">
+                    </div-->
+                    <div class="col-md-6 mb-3">
                         <label for="difficultySelect" class="form-label">Difficulty</label>
                         <select id="difficultySelect" class="form-select" name="difficulty">
                             <option value="" selected>Any Difficulty</option>
@@ -33,7 +33,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="tagInput" class="form-label">Tags</label>
                         <input type="text" class="form-control" id="tagInput" name="tags" placeholder="Enter tags (e.g., algebra, arrays)" value="{{ tags }}" />
                     </div>
