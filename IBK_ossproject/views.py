@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 from .models import Follow, Friendship, Message, BlogPost
 from .forms import FollowForm, MessageForm, BlogPostForm
 from django.db.models import Q
+from django.core.paginator import Paginator
+import requests
 import random
 import string
 
@@ -123,7 +125,8 @@ def blog_edit(request, pk):
         return redirect('blog_post')
 
     if request.method == 'POST':
-        form = BlogPostForm(request.POST, instance=blog_post, user=request.user)
+        form = BlogPostForm(request.POST, request.FILES, instance=blog_post, user=request.user)
+
         if form.is_valid():
             form.save()
             messages.success(request, "Blog post updated successfully.")
@@ -231,3 +234,41 @@ def qa_board(request):
 
 def resources_board(request):
     return render(request, 'resources-board.html')
+
+
+def question_bank(request):
+    # API 요청 보내기
+    response = requests.get("https://codeforces.com/api/problemset.problems")
+    
+    if response.status_code == 200:
+        # 응답이 성공적이면 데이터를 JSON 형식으로 파싱
+        data = response.json()
+        problems_list = data.get("result", {}).get("problems", [])
+    else:
+        # 요청이 실패한 경우 빈 리스트로 설정
+        problems_list = []
+
+    # 검색어, 난이도, 태그 가져오기
+    search_tags = request.GET.get('tags', '').lower()
+    difficulty = request.GET.get('difficulty', '')
+    
+    if search_tags:
+        problems_list = [
+            problem for problem in problems_list
+            if search_tags in ', '.join(problem.get('tags', [])).lower()
+        ]
+    
+    if difficulty:
+        try:
+            difficulty = int(difficulty)
+            problems_list = [problem for problem in problems_list if problem.get('rating') == difficulty]
+        except ValueError:
+            pass  # 난이도가 숫자가 아닐 경우, 필터링을 적용하지 않음
+
+    # 페이징 설정
+    paginator = Paginator(problems_list, 7)  # 한 페이지에 7개의 문제만 표시
+    page_number = request.GET.get('page')
+    problems = paginator.get_page(page_number)
+
+    # 템플릿에 데이터를 전달하며 렌더링
+    return render(request, 'question-bank.html', {'problems': problems, 'tags': search_tags, 'difficulty': difficulty, 'rating_range': range(100, 4501, 100)})
