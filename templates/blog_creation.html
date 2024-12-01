@@ -35,9 +35,17 @@
                                         <option value="기타">기타</option>
                                     </select>
                                 </div>
+                                {% if form.initial.content %}<div class="mb-3">
+                                    <label for="problem" class="form-label">문제</label>
+                                    <textarea class="form-control" id="problem" name="problem" rows="5" readonly>{{ form.initial.content }}</textarea>
+                                </div>
+                                <div class="d-grid gap-2 mt-3">
+                                    <a href="https://codeforces.com/contest/{{ form.initial.contestId }}/problem/{{ form.initial.index }}" class="btn btn-primary" target="_blank">문제 바로가기</a>
+                                </div>
+                                {% endif %}
                                 <div class="mb-3">
                                     <label for="content" class="form-label">내용</label>
-                                    <textarea class="form-control" id="content" name="content" rows="15" placeholder="내용을 입력하세요" required>{% if form.initial.content %}{{ form.initial.content }}{% endif %}</textarea>
+                                    <textarea class="form-control" id="content" name="content" rows="15" placeholder="내용을 입력하세요" required></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="image" class="form-label">이미지 첨부 (선택사항)</label>
