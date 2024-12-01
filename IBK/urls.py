@@ -9,9 +9,6 @@ urlpatterns = [
     path('', views.home, name='home'),  # 홈 페이지
     path('login/', views.user_login, name='login'),  # 로그인 페이지
     path('logout/', views.user_logout, name='logout'), # 로그아웃
-    path('profile-management/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
-    path('user_problem/', views.user_problem, name='user_problem'),  # 문제 해결 페이지
-    path('problem-creation/', views.problem_creation, name='problem_creation'),  # 문제 생성 페이지
     path('question-bank/', views.question_bank, name='question_bank'),
     path('community/', views.community, name='community'),  # 커뮤니티 페이지
     path('blog-post/', views.blog_post, name='blog_post'),  # 블로그 페이지
@@ -32,9 +29,10 @@ urlpatterns = [
     path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
     path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
     path('blog/search/', views.blog_search, name='blog_search'),
-    path('problem-creation/', views.create_problem, name='problem_creation'),  # 문제 작성 페이지
-    path('user_problem/', views.user_problems, name='user_problem'),            # 문제 목록 페이지
-    path('problem/<int:pk>/', views.problem_detail, name='problem'),           # 문제 상세 페이지
+    path('problem-creation/', views.create_problem, name='problem_creation'),
+    path('user_problem/', views.user_problems, name='user_problems'),
+    path('problem/<int:pk>/', views.problem_detail, name='problem_detail'),
+    path('problem/<int:pk>/edit/', views.edit_problem, name='edit_problem'),
 
 
 
@@ -43,3 +41,4 @@ urlpatterns = [
 if settings.DEBUG:
     #urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

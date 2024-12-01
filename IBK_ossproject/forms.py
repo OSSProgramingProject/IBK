@@ -45,27 +45,6 @@ class BlogPostForm(forms.ModelForm):
 class ProblemForm(forms.ModelForm):
     class Meta:
         model = Problem
-        fields = ['title', 'description', 'options', 'category', 'difficulty', 'tags', 'image']
+        fields = ['title', 'description', 'image', 'category', 'difficulty',]
+        
 
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4, 'placeholder': '문제에 대한 설명을 입력하세요'}),
-            'options': forms.Textarea(attrs={
-                'rows': 3, 
-                'placeholder': '선택지를 JSON 형식으로 입력하세요 (예: ["선택1", "선택2"])'
-            }),
-            'tags': forms.TextInput(attrs={'placeholder': '쉼표로 태그를 구분하여 입력하세요 (예: 태그1, 태그2)'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        # kwargs에서 user를 꺼내 저장
-        self.user = kwargs.pop('user', None)
-        super(ProblemForm, self).__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        instance = super(ProblemForm, self).save(commit=False)
-        # 현재 사용자를 작성자로 설정
-        if self.user:
-            instance.author = self.user
-        if commit:
-            instance.save()
-        return instance

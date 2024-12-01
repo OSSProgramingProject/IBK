@@ -144,11 +144,6 @@ def blog_search(request):
     blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
     return render(request, 'blog-post.html', {'blog_posts': blog_posts, 'query': query})
 
-def user_problem(request):
-    return render(request, 'user_problem.html')
-
-def problem_creation(request):
-    return render(request, 'problem-creation.html')
 
 def question_bank(request):
     return render(request, 'question-bank.html')
@@ -277,32 +272,46 @@ def question_bank(request):
     return render(request, 'question-bank.html', {'problems': problems, 'tags': search_tags, 'difficulty': difficulty, 'rating_range': range(100, 4501, 100)})
 
 
-@login_required
 def create_problem(request):
     if request.method == 'POST':
-        form = ProblemForm(request.POST, request.FILES, user=request.user)  # user 전달
+        form = ProblemForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, '문제가 성공적으로 작성되었습니다.')
-            return redirect('user_problems')  # 작성 문제 목록 페이지로 이동
+            problem = form.save(commit=False)
+            problem.author = request.user
+            problem.save()
+            print("문제 저장 완료:")  # 디버깅: 저장된 데이터 확인
+            return redirect('user_problems')
         else:
-            print(form.errors)
+            print("폼 유효성 실패:", form.errors)  # 디버깅: 유효성 실패 이유 출력
     else:
-        form = ProblemForm(user=request.user)  # 폼 초기화 시 user 전달
-
-
+        form = ProblemForm()
     return render(request, 'problem-creation.html', {'form': form})
 
+@login_required
 def user_problems(request):
-    problems = Problem.objects.all().order_by('-created_at')
-    return render(request, 'user_problem.html', {'problems': problems})
+    user_problems = Problem.objects.all().order_by('-created_at')
+    return render(request, 'user_problem.html', {'user_problems': user_problems})
 
 
 
-def problem_detail(request, problem_id):
-    """
-    문제 상세 페이지: 특정 문제의 상세 정보를 표시합니다.
-    """
-    problem = get_object_or_404(Problem, pk=problem_id)
+@login_required
+def problem_detail(request, pk):
+    problem = get_object_or_404(Problem, pk=pk)
     return render(request, 'problem.html', {'problem': problem})
+
+
+@login_required
+def edit_problem(request, pk):
+    problem = get_object_or_404(Problem, pk=pk, author=request.user)  # 작성자만 수정 가능
+    if request.method == 'POST':
+        form = ProblemForm(request.POST, request.FILES, instance=problem)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "문제가 성공적으로 수정되었습니다.")
+            return redirect('problem_detail', pk=problem.pk)
+        else:
+            messages.error(request, "문제를 수정하는 데 오류가 발생했습니다.")
+    else:
+        form = ProblemForm(instance=problem)
+    return render(request, 'problem_edit.html', {'form': form, 'problem': problem})
 

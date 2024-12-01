@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}문제 업로드 - Start Ideabank{% endblock %}
+{% block title %}문제 수정 - {{ problem.title }}{% endblock %}
 
 {% block content %}
 <style>
@@ -52,25 +52,29 @@
 
 <div class="container py-5">
     <div class="title-box">
-        <h1>새 문제 업로드</h1>
+        <h1>문제 수정</h1>
     </div>
-    <form method="POST" action="{% url 'problem_creation' %}" enctype="multipart/form-data">
+    <form method="POST" action="{% url 'edit_problem' problem.pk %}" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- 문제 제목 -->
         <div class="form-section">
             <h2>문제 제목</h2>
-            <input type="text" class="form-control" name="title" placeholder="문제 제목을 입력하세요" required>
+            <input type="text" class="form-control" name="title" value="{{ form.title.value }}" placeholder="문제 제목을 입력하세요" required>
         </div>
 
         <!-- 문제 설명 -->
         <div class="form-section">
             <h2>문제 설명</h2>
-            <textarea class="form-control" name="description" rows="4" placeholder="문제 설명을 입력하세요"></textarea>
+            <textarea class="form-control" name="description" rows="4" placeholder="문제 설명을 입력하세요">{{ form.description.value }}</textarea>
         </div>
 
         <!-- 이미지 업로드 -->
         <div class="form-section">
             <h2>이미지 업로드</h2>
+            {% if problem.image %}
+                <p>현재 이미지:</p>
+                <img src="{{ problem.image.url }}" alt="현재 이미지" class="img-fluid mb-3">
+            {% endif %}
             <input type="file" class="form-control" name="image" accept="image/*">
         </div>
 
@@ -78,10 +82,10 @@
         <div class="form-section">
             <h2>카테고리</h2>
             <select class="form-control" name="category">
-                <option value="Algorithm">알고리즘</option>
-                <option value="Data Structure">자료구조</option>
-                <option value="Mathematics">수학</option>
-                <option value="Others">기타</option>
+                <option value="Algorithm" {% if form.category.value == "Algorithm" %}selected{% endif %}>알고리즘</option>
+                <option value="Data Structure" {% if form.category.value == "Data Structure" %}selected{% endif %}>자료구조</option>
+                <option value="Mathematics" {% if form.category.value == "Mathematics" %}selected{% endif %}>수학</option>
+                <option value="Others" {% if form.category.value == "Others" %}selected{% endif %}>기타</option>
             </select>
         </div>
 
@@ -89,15 +93,16 @@
         <div class="form-section">
             <h2>난이도</h2>
             <select class="form-control" name="difficulty">
-                <option value="Easy">쉬움</option>
-                <option value="Medium">중간</option>
-                <option value="Hard">어려움</option>
+                <option value="Easy" {% if form.difficulty.value == "Easy" %}selected{% endif %}>쉬움</option>
+                <option value="Medium" {% if form.difficulty.value == "Medium" %}selected{% endif %}>중간</option>
+                <option value="Hard" {% if form.difficulty.value == "Hard" %}selected{% endif %}>어려움</option>
             </select>
         </div>
 
         <!-- 제출 버튼 -->
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success">문제 제출</button>
+            <button type="submit" class="btn btn-success">수정 저장</button>
+            <a href="{% url 'problem_detail' problem.pk %}" class="btn btn-secondary">취소</a>
         </div>
     </form>
 </div>
