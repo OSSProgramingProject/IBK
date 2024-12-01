@@ -12,11 +12,11 @@
                 <p class="lead fw-normal text-muted mb-5">Find problems by category, difficulty, tags, or keywords</p>
             </div>
             <!-- Problem Search Form-->
-            <form id="problem-search-form">
+            <form id="problem-search-form" method="get" action="{% url 'question_bank' %}">
                 <div class="row gx-5">
                     <div class="col-md-4 mb-3">
                         <label for="categorySelect" class="form-label">Category</label>
-                        <select id="categorySelect" class="form-select">
+                        <select id="categorySelect" class="form-select" name="category">
                             <option selected>All Categories</option>
                             <option value="math">Math</option>
                             <option value="science">Science</option>
@@ -26,16 +26,16 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="difficultySelect" class="form-label">Difficulty</label>
-                        <select id="difficultySelect" class="form-select">
-                            <option selected>Any Difficulty</option>
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
+                        <select id="difficultySelect" class="form-select" name="difficulty">
+                            <option value="" selected>Any Difficulty</option>
+                            {% for rating in rating_range %}
+                                <option value="{{ rating }}" {% if difficulty == rating|stringformat:"d" %}selected{% endif %}>{{ rating }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="tagInput" class="form-label">Tags</label>
-                        <input type="text" class="form-control" id="tagInput" placeholder="Enter tags (e.g., algebra, arrays)" />
+                        <input type="text" class="form-control" id="tagInput" name="tags" placeholder="Enter tags (e.g., algebra, arrays)" value="{{ tags }}" />
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">

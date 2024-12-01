@@ -254,16 +254,27 @@ def question_bank(request):
         # 요청이 실패한 경우 빈 리스트로 설정
         problems_list = []
 
-    # Django 모델을 사용하지 않으므로 problems_list를 바로 사용
-    paginator = Paginator(problems_list, 7)  # 한 페이지에 7개의 문제만 표시
+    # 검색어, 난이도, 태그 가져오기
+    search_tags = request.GET.get('tags', '').lower()
+    difficulty = request.GET.get('difficulty', '')
     
-    page = request.GET.get('page')
-    try:
-        problems = paginator.page(page)
-    except PageNotAnInteger:
-        problems = paginator.page(1)  # 페이지가 숫자가 아닐 경우 첫 페이지를 반환
-    except EmptyPage:
-        problems = paginator.page(paginator.num_pages)  # 빈 페이지 요청 시 마지막 페이지 반환
+    if search_tags:
+        problems_list = [
+            problem for problem in problems_list
+            if search_tags in ', '.join(problem.get('tags', [])).lower()
+        ]
+    
+    if difficulty:
+        try:
+            difficulty = int(difficulty)
+            problems_list = [problem for problem in problems_list if problem.get('rating') == difficulty]
+        except ValueError:
+            pass  # 난이도가 숫자가 아닐 경우, 필터링을 적용하지 않음
+
+    # 페이징 설정
+    paginator = Paginator(problems_list, 7)  # 한 페이지에 7개의 문제만 표시
+    page_number = request.GET.get('page')
+    problems = paginator.get_page(page_number)
 
     # 템플릿에 데이터를 전달하며 렌더링
-    return render(request, 'question-bank.html', {'problems': problems})
+    return render(request, 'question-bank.html', {'problems': problems, 'tags': search_tags, 'difficulty': difficulty, 'rating_range': range(100, 4501, 100)})
