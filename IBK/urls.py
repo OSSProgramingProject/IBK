@@ -32,6 +32,9 @@ urlpatterns = [
     path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
     path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
     path('blog/search/', views.blog_search, name='blog_search'),
+    path('problem-creation/', views.create_problem, name='problem_creation'),  # 문제 작성 페이지
+    path('user_problem/', views.user_problems, name='user_problem'),            # 문제 목록 페이지
+    path('problem/<int:pk>/', views.problem_detail, name='problem'),           # 문제 상세 페이지
 
 
 

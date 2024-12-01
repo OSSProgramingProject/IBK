@@ -1,149 +1,130 @@
 {% extends 'base.html' %}
 
-{% block title %}User Problem - Start ideabank{% endblock %}
-
 {% block content %}
-    <section class="py-5">
-        <div class="container px-5">
-            <h1 class="fw-bolder fs-5 mb-4">Company Blog</h1>
-            <div class="card border-0 shadow rounded-3 overflow-hidden">
-                <div class="card-body p-0">
-                    <div class="row gx-0">
-                        <div class="col-lg-6 col-xl-5 py-lg-5">
-                            <div class="p-4 p-md-5">
-                                <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
-                                <div class="h2 fw-bolder">{{ latest_post.title }}</div>
-                                <p>{{ latest_post.content|truncatewords:20 }}</p>
-                                <a class="stretched-link text-decoration-none" href="{% if latest_post %}{% url 'post_detail' latest_post.id %}{% else %}#{% endif %}">
-                                    Read more
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
+    <!-- 페이지 헤더 -->
+    <header class="py-5 bg-light border-bottom mb-4">
+        <div class="container">
+            <div class="text-center my-5">
+                <h1 id="header-title" class="fw-bolder editable" contenteditable="false">작성한 문제 목록</h1>
+                <p id="header-description" class="lead mb-0 editable" contenteditable="false">여기에서 내가 작성한 문제와 해결한 문제들을 볼 수 있습니다.</p>
+                <a id="header-button" href="{% url 'problem_creation' %}" class="btn btn-primary mt-3">문제 작성하기</a>
+                <button id="save-header-button" class="btn btn-success mt-3 d-none">저장</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 페이지 내용 -->
+    <div class="container">
+        <div class="row">
+            <!-- 메인 콘텐츠 -->
+            <div class="col-lg-9">
+                <!-- 기본 문제 목록 표시 -->
+                <div class="row">
+                    <h3>내가 작성한 문제들</h3>
+                    {% for problem in user_problems %}
+                        <div class="card mb-4">
+                            {% if problem.image %}
+                                <img class="card-img-top" src="{{ problem.image.url }}" alt="{{ problem.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="small text-muted">{{ problem.created_at|date:"Y년 m월 d일" }}</div>
+                                <h2 class="card-title">{{ problem.title }}</h2>
+                                <p class="card-text">{{ problem.description|truncatechars:100 }}</p>
+                                <a class="btn btn-primary" href="{% url 'problem_detail' problem.pk %}">자세히 보기 →</a>
+                                {% if problem.author == user %}
+                                    <a href="{% url 'problem_edit' problem.pk %}" class="btn btn-warning">수정</a>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="col-lg-6 col-xl-7">
-                            <div class="bg-featured-blog" style="background-image: url('{{ latest_post.image_url|default:'https://dummyimage.com/600x350/ced4da/6c757d' }}')"></div>
+                    {% empty %}
+                        <p>작성한 문제가 없습니다.</p>
+                    {% endfor %}
+                </div>
+
+                <hr>
+                
+                <!-- 해결한 문제 목록 표시 -->
+                <div class="row">
+                    <h3>내가 해결한 문제들</h3>
+                    {% for solved_problem in solved_problems %}
+                        <div class="card mb-4">
+                            {% if solved_problem.image %}
+                                <img class="card-img-top" src="{{ solved_problem.image.url }}" alt="{{ solved_problem.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="small text-muted">{{ solved_problem.solved_at|date:"Y년 m월 d일" }}</div>
+                                <h2 class="card-title">{{ solved_problem.title }}</h2>
+                                <p class="card-text">{{ solved_problem.description|truncatechars:100 }}</p>
+                                <a class="btn btn-primary" href="{% url 'problem_detail' solved_problem.pk %}">자세히 보기 →</a>
+                            </div>
                         </div>
+                    {% empty %}
+                        <p>해결한 문제가 없습니다.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 사이드바 -->
+            <div class="col-lg-3">
+                <!-- 카테고리 위젯 -->
+                <div class="card mb-4">
+                    <div class="card-header">카테고리</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li><a href="#!">알고리즘</a></li>
+                                    <li><a href="#!">자료 구조</a></li>
+                                    <li><a href="#!">수학 문제</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li><a href="#!">Python</a></li>
+                                    <li><a href="#!">JavaScript</a></li>
+                                    <li><a href="#!">C++</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 작성하기 버튼 -->
+                <div class="card mb-4">
+                    <div class="card-header">문제 작성하기</div>
+                    <div class="card-body">
+                        <a href="{% url 'problem_creation' %}" class="btn btn-primary">문제 작성하기</a>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <section class="py-5 bg-light">
-        <div class="container px-5">
-            <div class="row gx-5">
-                <div class="col-xl-8">
-                    <h2 class="fw-bolder fs-5 mb-4">작성 문제 목록</h2>
-                    <div class="mb-4">
-                        <div class="small text-muted">2023년 5월 12일</div>
-                        <a class="link-dark" href="#"><h3>새로운 문제 작성 - 배열 처리 문제</h3></a>
-                    </div>
-                    <div class="mb-5">
-                        <div class="small text-muted">2023년 5월 5일</div>
-                        <a class="link-dark" href="#"><h3>정렬 알고리즘 문제: 퀵소트 구현하기</h3></a>
-                    </div>
-                    <div class="mb-5">
-                        <div class="small text-muted">2023년 4월 21일</div>
-                        <a class="link-dark" href="#"><h3>문자열 분석 문제 - 회문 체크</h3></a>
-                    </div>
-                    <div class="text-end mb-5 mb-xl-0">
-                        <a class="text-decoration-none" href="#">
-                            더 많은 문제 보기
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="card border-0 h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex h-100 align-items-center justify-content-center">
-                                <div class="text-center">
-                                    <div class="h6 fw-bolder">문의하기</div>
-                                    <p class="text-muted mb-4">
-                                        문의 사항은 이메일로 연락주세요:
-                                        <br />
-                                        <a href="#">contact@domain.com</a>
-                                    </p>
-                                    <div class="h6 fw-bolder">팔로우하기</div>
-                                    <a class="fs-5 px-2 link-dark" href="#"><i class="bi-twitter"></i></a>
-                                    <a class="fs-5 px-2 link-dark" href="#"><i class="bi-facebook"></i></a>
-                                    <a class="fs-5 px-2 link-dark" href="#"><i class="bi-linkedin"></i></a>
-                                    <a class="fs-5 px-2 link-dark" href="#"><i class="bi-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="py-5">
-        <div class="container px-5">
-            <h2 class="fw-bolder fs-5 mb-4">풀이한 문제</h2>
-            <div class="row gx-5">
-                <div class="col-lg-4 mb-5">
-                    <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="..." />
-                        <div class="card-body p-4">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">알고리즘</div>
-                            <a class="text-decoration-none link-dark stretched-link" href="#"><div class="h5 card-title mb-3">정렬 문제 풀이</div></a>
-                            <p class="card-text mb-0">퀵 정렬 알고리즘을 사용하여 주어진 배열을 오름차순으로 정렬하는 문제 풀이.</p>
-                        </div>
-                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-                            <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" alt="..." />
-                                    <div class="small">
-                                        <div class="fw-bold">홍길동</div>
-                                        <div class="text-muted">2023년 3월 12일 &middot; 6분 소요</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-5">
-                    <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="https://dummyimage.com/600x350/adb5bd/495057" alt="..." />
-                        <div class="card-body p-4">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">프로그래밍</div>
-                            <a class="text-decoration-none link-dark stretched-link" href="#"><div class="h5 card-title mb-3">이진 탐색 문제 풀이</div></a>
-                            <p class="card-text mb-0">정렬된 배열에서 특정 값을 효율적으로 찾는 이진 탐색 문제 해결 방법.</p>
-                        </div>
-                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-                            <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/adb5bd/495057" alt="..." />
-                                    <div class="small">
-                                        <div class="fw-bold">김철수</div>
-                                        <div class="text-muted">2023년 2월 25일 &middot; 10분 소요</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-5">
-                    <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="https://dummyimage.com/600x350/6c757d/343a40" alt="..." />
-                        <div class="card-body p-4">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">자료구조</div>
-                            <a class="text-decoration-none link-dark stretched-link" href="#"><div class="h5 card-title mb-3">스택 활용 문제</div></a>
-                            <p class="card-text mb-0">스택 자료구조를 사용하여 후위 표기식을 계산하는 문제 풀이.</p>
-                        </div>
-                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-                            <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/6c757d/343a40" alt="..." />
-                                    <div class="small">
-                                        <div class="fw-bold">이영희</div>
-                                        <div class="text-muted">2023년 1월 20일 &middot; 8분 소요</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // 요소 선택
+        const headerTitle = document.getElementById('header-title');
+        const headerDescription = document.getElementById('header-description');
+        const saveButton = document.getElementById('save-header-button');
+
+        // 페이지 로드 시 로컬 스토리지에서 데이터 불러오기
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTitle = localStorage.getItem('headerTitle');
+            const savedDescription = localStorage.getItem('headerDescription');
+
+            if (savedTitle) headerTitle.textContent = savedTitle;
+            if (savedDescription) headerDescription.textContent = savedDescription;
+        });
+
+        // 저장 버튼 클릭 시
+        saveButton.addEventListener('click', () => {
+            headerTitle.contentEditable = "false";
+            headerDescription.contentEditable = "false";
+            saveButton.classList.add('d-none');
+
+            // 로컬 스토리지에 저장
+            localStorage.setItem('headerTitle', headerTitle.textContent);
+            localStorage.setItem('headerDescription', headerDescription.textContent);
+        });
+    </script>
 {% endblock %}

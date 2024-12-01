@@ -34,3 +34,24 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+class Problem(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('Easy', '쉬움'),
+        ('Medium', '중간'),
+        ('Hard', '어려움'),
+    ]
+
+    title = models.CharField(max_length=255)  # 문제 제목
+    description = models.TextField()  # 문제 설명
+    options = models.JSONField(default=list)  # 선택지를 JSON으로 저장
+    category = models.CharField(max_length=100, blank=True, null=True)  # 카테고리
+    difficulty = models.CharField(max_length=50, choices=DIFFICULTY_CHOICES)  # 난이도
+    tags = models.CharField(max_length=255, blank=True, null=True)  # 태그
+    image = models.ImageField(upload_to='problem_images/', blank=True, null=True)  # 이미지
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='problems')  # 작성자
+    created_at = models.DateTimeField(auto_now_add=True)  # 작성일
+
+    def __str__(self):
+        return self.title

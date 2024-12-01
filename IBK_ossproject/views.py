@@ -1,8 +1,11 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from .models import UserProfile
 from django.contrib import messages
 from .forms import UserRegisterForm
+from .forms import ProblemForm
+from .models import Problem
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -272,3 +275,34 @@ def question_bank(request):
 
     # 템플릿에 데이터를 전달하며 렌더링
     return render(request, 'question-bank.html', {'problems': problems, 'tags': search_tags, 'difficulty': difficulty, 'rating_range': range(100, 4501, 100)})
+
+
+@login_required
+def create_problem(request):
+    if request.method == 'POST':
+        form = ProblemForm(request.POST, request.FILES, user=request.user)  # user 전달
+        if form.is_valid():
+            form.save()
+            messages.success(request, '문제가 성공적으로 작성되었습니다.')
+            return redirect('user_problems')  # 작성 문제 목록 페이지로 이동
+        else:
+            print(form.errors)
+    else:
+        form = ProblemForm(user=request.user)  # 폼 초기화 시 user 전달
+
+
+    return render(request, 'problem-creation.html', {'form': form})
+
+def user_problems(request):
+    problems = Problem.objects.all().order_by('-created_at')
+    return render(request, 'user_problem.html', {'problems': problems})
+
+
+
+def problem_detail(request, problem_id):
+    """
+    문제 상세 페이지: 특정 문제의 상세 정보를 표시합니다.
+    """
+    problem = get_object_or_404(Problem, pk=problem_id)
+    return render(request, 'problem.html', {'problem': problem})
+
