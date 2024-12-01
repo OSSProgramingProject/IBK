@@ -38,6 +38,13 @@
                                 <label for="image" class="form-label">이미지 첨부 (선택사항)</label>
                                 <input type="file" class="form-control" id="image" name="image">
                             </div>
+                            <div class="mb-3">
+                                <label for="visibility" class="form-label">공개 여부</label>
+                                <select class="form-select" id="visibility" name="visibility" required>
+                                    <option value="public" {% if form.visibility.value == "public" %}selected{% endif %}>전체공개</option>
+                                    <option value="private" {% if form.visibility.value == "private" %}selected{% endif %}>나만 보기</option>
+                                </select>
+                            </div>
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary me-2">수정 완료</button>
                                 <a href="{% url 'blog_post' %}" class="btn btn-secondary">취소</a>

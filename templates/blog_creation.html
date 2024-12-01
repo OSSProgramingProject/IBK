@@ -51,6 +51,13 @@
                                     <label for="image" class="form-label">이미지 첨부 (선택사항)</label>
                                     <input type="file" class="form-control" id="image" name="image">
                                 </div>
+                                <div class="mb-3">
+                                    <label for="visibility" class="form-label">공개 여부</label>
+                                    <select class="form-select" id="visibility" name="visibility" required>
+                                        <option value="public">전체공개</option>
+                                        <option value="private">나만 보기</option>
+                                    </select>
+                                </div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <button type="submit" class="btn btn-primary">게시글 등록</button>
                                     <a href="{% url 'blog_post' %}" class="btn btn-secondary">취소</a>

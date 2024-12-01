@@ -12,6 +12,7 @@ from .models import Follow, Friendship, Message, BlogPost
 from .forms import FollowForm, MessageForm, BlogPostForm
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.db import models
 import requests
 import random
 import string
@@ -122,7 +123,14 @@ def blog_create(request):
 
 
 def blog_post(request):
-    blog_posts = BlogPost.objects.all().order_by('-created_at')
+    # 로그인한 사용자의 게시글과 전체공개 게시글만 가져오기
+    if request.user.is_authenticated:
+        blog_posts = BlogPost.objects.filter(
+            models.Q(visibility='public') | models.Q(author=request.user)
+        )
+    else:
+        blog_posts = BlogPost.objects.filter(visibility='public')
+    
     return render(request, 'blog-post.html', {'blog_posts': blog_posts})
 
 def blog_detail(request, pk):
