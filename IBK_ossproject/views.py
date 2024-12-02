@@ -156,17 +156,27 @@ def blog_detail(request, pk):
 def blog_edit(request, pk):
     blog_post = get_object_or_404(BlogPost, pk=pk)
 
+    # 작성자가 아닌 사용자가 접근하려고 할 때
     if blog_post.author != request.user:
         messages.error(request, "You are not authorized to edit this blog post.")
         return redirect('blog_post')
 
+    # POST 요청 시 폼 처리
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES, instance=blog_post, user=request.user)
-
+        
         if form.is_valid():
             form.save()
             messages.success(request, "Blog post updated successfully.")
-            return redirect('blog_detail', pk=blog_post.pk)
+
+            # 수정 후 돌아갈 페이지 결정
+            source = request.GET.get('source', 'blog')
+            if source == 'user_problem':
+                return redirect('user_problem')
+            else:
+                return redirect('blog_post')
+
+    # GET 요청 시 폼 초기화
     else:
         form = BlogPostForm(instance=blog_post, user=request.user)
 
@@ -175,12 +185,21 @@ def blog_edit(request, pk):
 @login_required
 def blog_delete(request, pk):
     blog_post = get_object_or_404(BlogPost, pk=pk)
+
     # 작성자인지 확인
     if blog_post.author == request.user:
         blog_post.delete()
-        return redirect('blog_post')
+        messages.success(request, "Blog post deleted successfully.")
+
+        # 삭제 후 돌아갈 페이지 결정
+        source = request.GET.get('source', 'blog')
+        if source == 'user_problem':
+            return redirect('user_problem')
+        else:
+            return redirect('blog_post')
     else:
         # 작성자가 아닌 경우 접근 거부 처리
+        messages.error(request, "You are not authorized to delete this blog post.")
         return redirect('blog_detail', pk=pk)
     
 def blog_search(request):
