@@ -1,5 +1,6 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
 from django.http import HttpResponse
 from .models import UserProfile
 from django.contrib import messages
@@ -296,10 +297,12 @@ def findpassword_result(request):
     return render(request, 'findpassword_result.html')
 
 def qa_board(request):
-    return render(request, 'qa-board.html')
+    questions = Question.objects.all().order_by('-created_at')
+    return render(request, 'qa_board.html', {'questions': questions})
 
 def resources_board(request):
-    return render(request, 'resources-board.html')
+    datas = Data.objects.all().order_by('-created_at')
+    return render(request, 'resources-board.html', {'datas': datas})
 
 
 def question_bank(request):
@@ -446,20 +449,22 @@ def qa_edit(request, question_id):
     
     return render(request, 'qa_edit.html', {'form': form, 'question': question})
 
-def qa_board(request):
-    questions = Question.objects.all().order_by('-created_at')
-    return render(request, 'qa_board.html', {'questions': questions})
-
 def question_detail(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     return render(request, 'question_detail.html', {'question': question})
 
-def resources_board(request):
-    datas = Data.objects.all().order_by('-created_at')
-    return render(request, 'resources-board.html', {'datas': datas})
+@login_required
+def delete_question(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    if question.author != request.user:
+        return HttpResponseForbidden("삭제할 권한이 없습니다.")
+    question.delete()
+    return redirect('qa_board')  # 질문 목록 페이지로 리다이렉트
+
 
 @login_required
 def data_upload(request):
+
     if request.method == 'POST':
         form = DataForm(request.POST)
         if form.is_valid():
@@ -494,3 +499,11 @@ def data_edit(request, data_id):
 def data_detail(request, data_id):
     data = get_object_or_404(Data, id=data_id)
     return render(request, 'data_detail.html', {'data': data})
+
+@login_required
+def data_delete(request, id):
+    data = get_object_or_404(Data, id=id)
+    if data.author != request.user:
+        return HttpResponseForbidden("삭제 권한이 없습니다.")
+    data.delete()
+    return redirect('resources_board')
