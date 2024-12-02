@@ -74,6 +74,10 @@
                                     <a class="btn btn-primary" href="{% url 'blog_detail' blog.pk %}">자세히 보기 →</a>
                                     {% if blog.author == user %}
                                         <a href="{% url 'blog_edit' blog.pk %}" class="btn btn-warning">수정</a>
+                                        <form method="POST" action="{% url 'blog_delete' blog.pk %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">삭제</button>
+                                        </form>
                                     {% endif %}
                                 </div>
                             </div>

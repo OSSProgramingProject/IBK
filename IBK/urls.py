@@ -33,7 +33,7 @@ urlpatterns = [
     path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
     path('blog/search/', views.blog_search, name='blog_search'),
     path('blog/delete/<int:pk>/', views.blog_delete, name='blog_delete'),
-
+    
 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
