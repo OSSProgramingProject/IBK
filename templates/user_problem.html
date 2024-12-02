@@ -54,7 +54,7 @@
                 </div>
                 <div class="col-xl-4">
                     <div class="card border-0 h-100">
-                        <div class="card-body p-4">
+                        <!--div class="card-body p-4">
                             <div class="d-flex h-100 align-items-center justify-content-center">
                                 <div class="text-center">
                                     <div class="h6 fw-bolder">문의하기</div>
@@ -70,7 +70,7 @@
                                     <a class="fs-5 px-2 link-dark" href="#"><i class="bi-youtube"></i></a>
                                 </div>
                             </div>
-                        </div>
+                        </div-->
                     </div>
                 </div>
             </div>
@@ -87,15 +87,20 @@
                         <div class="card h-100 shadow border-0">
                             {% if blog.image %}
                                 <img class="card-img-top" src="{{ blog.image.url }}" alt="{{ blog.title }}" />
-                            {% else %}
-                                <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="..." />
                             {% endif %}
                             <div class="card-body p-4">
                                 <div class="badge bg-primary bg-gradient rounded-pill mb-2">{{ blog.category }}</div>
                                 <a class="text-decoration-none link-dark stretched-link" href="{% url 'blog_detail' blog.pk %}">
                                     <div class="h5 card-title mb-3">{{ blog.title }}</div>
                                 </a>
-                                <p class="card-text mb-0">{{ blog.content|truncatechars:100 }}</p>
+                                <p class="card-text">
+                                    {% if blog.problem_name %}
+                                    Problem: {{ blog.contest_id }} - {{ blog.index }} ({{ blog.problem_name }})<br>
+                                    Tags : {{ blog.tags }}
+                                    {% else %}
+                                        {{ blog.content|truncatechars:100 }}
+                                    {% endif %}
+                                </p>
                             </div>
                             <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
                                 <div class="d-flex align-items-end justify-content-between">
@@ -116,4 +121,21 @@
             </div>
         </div>
     </section>
+    <div class="card-body p-4">
+        <div class="d-flex h-100 align-items-center justify-content-center">
+            <div class="text-center">
+                <div class="h6 fw-bolder">문의하기</div>
+                <p class="text-muted mb-4">
+                    문의 사항은 이메일로 연락주세요:
+                    <br />
+                    <a href="#">contact@domain.com</a>
+                </p>
+                <div class="h6 fw-bolder">팔로우하기</div>
+                <a class="fs-5 px-2 link-dark" href="#"><i class="bi-twitter"></i></a>
+                <a class="fs-5 px-2 link-dark" href="#"><i class="bi-facebook"></i></a>
+                <a class="fs-5 px-2 link-dark" href="#"><i class="bi-linkedin"></i></a>
+                <a class="fs-5 px-2 link-dark" href="#"><i class="bi-youtube"></i></a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
