@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import BlogPost
 from .models import Problem
+from .models import Question
+from .models import Data
 
 
 
@@ -48,3 +50,27 @@ class ProblemForm(forms.ModelForm):
         fields = ['title', 'description', 'image', 'category', 'difficulty', 'example_input', 'example_output']
         
 
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        # 모델에 실제 존재하는 필드만 사용합니다.
+        fields = ['title', 'category', 'difficulty', 'content']  # 'content' 필드 추가
+
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': '질문의 제목을 입력하세요'}),
+            'category': forms.Select(),
+            'difficulty': forms.Select(),
+            'content': forms.Textarea(attrs={'placeholder': '질문 내용을 입력하세요', 'rows': 10}),  # 'content' 필드에 위젯 추가
+        }
+
+class DataForm(forms.ModelForm):
+    class Meta:
+        model = Data
+        fields = ['title', 'category', 'content']
+        
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': '질문의 제목을 입력하세요'}),
+            'category': forms.Select(),
+            'content': forms.Textarea(attrs={'placeholder': '질문 내용을 입력하세요', 'rows': 10}),  # 'content' 필드에 위젯 추가
+        }

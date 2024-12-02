@@ -20,8 +20,8 @@ urlpatterns = [
     path('findpassword-result/', views.findpassword_result, name='findpassword_result'),  # 비밀번호 찾기 결과 페이지
     path('profile/', views.profile_management, name='profile_management'),  # 프로필 관리 페이지
     path('admin/', admin.site.urls), #관리자 페이지 경로 설정
-    path('qa-board/', views.qa_board, name='qa-board'), # QnA 게시판
-    path('resources-board/', views.resources_board, name='resources-board'), # 자료 게시판
+    path('qa-board/', views.qa_board, name='qa_board'), # QnA 게시판
+    path('resources-board/', views.resources_board, name='resources_board'), # 자료 게시판
     path('follow/', views.follow_user, name='follow_user'),
     path('send_message/', views.send_message, name='send_message'),
     path('add_friend/', views.add_friend, name='add_friend'),
@@ -34,6 +34,12 @@ urlpatterns = [
     path('problem/<int:pk>/', views.problem_detail, name='problem_detail'),
     path('problem/<int:pk>/edit/', views.edit_problem, name='edit_problem'),
     path('problem/delete/<int:pk>/', views.delete_problem, name='delete_problem'),  # 삭제 URL 추가
+    path('qa/create/', views.qa_creation, name='qa_creation'),  # 질문 작성 페이지
+    path('qa/<int:question_id>/', views.question_detail, name='question_detail'),  # 질문 상세 페이지
+    path('qa/<int:question_id>/edit/', views.qa_edit, name='qa_edit'),  # 질문 수정 페이지 추가
+    path('data/upload/', views.data_upload, name='data_upload'),  # 자료 업로드
+    path('data/<int:data_id>/', views.data_detail, name='data_detail'),  # 자료 상세 보기
+    path('data/<int:data_id>/edit/', views.data_edit, name='data_edit'),  # 자료 수정
 
 
 

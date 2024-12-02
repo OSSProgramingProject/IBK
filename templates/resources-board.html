@@ -7,54 +7,32 @@
             <div class="text-center my-5">
                 <h1 id="header-title" class="fw-bolder editable" contenteditable="false">자료게시판에 오신 것을 환영합니다!</h1>
                 <p id="header-description" class="lead mb-0 editable" contenteditable="false">여러분의 유용한 자료를 공유하고 함께 성장해요!</p>
-                <a id="header-button" href="data-upload.html" class="btn btn-primary mt-3">자료 올리기</a>
-                <!-- 수정 버튼 추가 -->
-                <button id="edit-header-button" class="btn btn-warning mt-3">수정</button>
+                <a id="header-button" href="{% url 'data_upload' %}" class="btn btn-primary mt-3">자료 올리기</a>
                 <button id="save-header-button" class="btn btn-success mt-3 d-none">저장</button>
             </div>
         </div>
     </header>
 
-    <!-- 페이지 내용 -->
+    <!-- 자료 목록 -->
     <div class="container">
         <div class="row">
+            <!-- 자료 게시물 -->
             <div class="col-lg-12">
-                <!-- 주요 자료 게시물 -->
+                {% for data in datas %}
                 <div class="card mb-4">
-                    <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/abcdef/6c757d.jpg" alt="..." /></a>
                     <div class="card-body">
-                        <div class="small text-muted">2023년 1월 1일</div>
-                        <h2 class="card-title">자료 제목</h2>
-                        <p class="card-text">여기에는 자료를 공유하거나 참고할 수 있는 내용을 올려보세요!</p>
-                        <a class="btn btn-primary" href="#!">자세히 보기 →</a>
+                        <div class="small text-muted">{{ data.created_at|date:"Y년 m월 d일" }}</div>
+                        <h2 class="card-title">{{ data.title }}</h2>
+                        <p class="card-text">{{ data.content|truncatewords:20 }}</p>
+                        <a class="btn btn-primary" href="{% url 'data_detail' data.id %}">자세히 보기 →</a>
+                        {% if user.is_authenticated and data.author == user %}
+                            <a class="btn btn-secondary" href="{% url 'data_edit' data.id %}">수정하기</a>
+                        {% endif %}
                     </div>
                 </div>
-
-                <!-- 추가 자료 게시물 -->
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/abcdef/6c757d.jpg" alt="..." /></a>
-                            <div class="card-body">
-                                <div class="small text-muted">2023년 1월 1일</div>
-                                <h2 class="card-title h4">자료 제목</h2>
-                                <p class="card-text">자료를 통해 문제를 해결하고, 서로 도움이 되는 정보를 나눠보세요!</p>
-                                <a class="btn btn-primary" href="#!">자세히 보기 →</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/abcdef/6c757d.jpg" alt="..." /></a>
-                            <div class="card-body">
-                                <div class="small text-muted">2023년 1월 1일</div>
-                                <h2 class="card-title h4">자료 제목</h2>
-                                <p class="card-text">다양한 자료를 공유하고 유익한 정보를 제공해 주세요!</p>
-                                <a class="btn btn-primary" href="#!">자세히 보기 →</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% empty %}
+                <p>아직 등록된 자료가 없습니다. 자료를 작성해 보세요!</p>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -78,18 +56,20 @@
         });
 
         // 수정 버튼 클릭 시
-        editButton.addEventListener('click', () => {
-            headerTitle.contentEditable = "true";
-            headerDescription.contentEditable = "true";
-            editButton.classList.add('d-none');
-            saveButton.classList.remove('d-none');
-        });
+        if (editButton) {
+            editButton.addEventListener('click', () => {
+                headerTitle.contentEditable = "true";
+                headerDescription.contentEditable = "true";
+                editButton.classList.add('d-none');
+                saveButton.classList.remove('d-none');
+            });
+        }
 
         // 저장 버튼 클릭 시
         saveButton.addEventListener('click', () => {
             headerTitle.contentEditable = "false";
             headerDescription.contentEditable = "false";
-            editButton.classList.remove('d-none');
+            if (editButton) editButton.classList.remove('d-none');
             saveButton.classList.add('d-none');
             
             // 로컬 스토리지에 저장

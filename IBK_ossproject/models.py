@@ -55,3 +55,46 @@ class Problem(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+
+class Question(models.Model):
+    CATEGORY_CHOICES = [
+        ('알고리즘', '알고리즘'),
+        ('자료구조', '자료구조'),
+        ('프로그래밍 언어', '프로그래밍 언어'),
+        ('기타', '기타'),
+    ]
+    DIFFICULTY_CHOICES = [
+        ('쉬움', '쉬움'),
+        ('보통', '보통'),
+        ('어려움', '어려움'),
+    ]
+
+    title = models.CharField(max_length=255)  # 질문 제목
+    content = models.TextField()  # 질문 내용
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, blank=True, null=True)  # 카테고리
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, blank=True, null=True)  # 난이도
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questions_created')  # 작성자
+    created_at = models.DateTimeField(auto_now_add=True)  # 작성일
+
+    def __str__(self):
+        return self.title
+
+
+class Data(models.Model):
+    CATEGORY_CHOICES = [
+        ('알고리즘', '알고리즘'),
+        ('자료구조', '자료구조'),
+        ('프로그래밍 언어', '프로그래밍 언어'),
+        ('기타', '기타'),
+    ]
+
+    title = models.CharField(max_length=255)  # 질문 제목
+    content = models.TextField(default="기본 내용 없음")  # 질문 내용, 기본값 설정
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, blank=True, null=True)  # 카테고리
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='data_posts')  # 작성자
+    created_at = models.DateTimeField(auto_now_add=True)  # 작성일
+
+    def __str__(self):
+        return self.title

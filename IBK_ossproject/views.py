@@ -6,6 +6,10 @@ from django.contrib import messages
 from .forms import UserRegisterForm
 from .forms import ProblemForm
 from .models import Problem
+from .forms import QuestionForm
+from .models import Question
+from .forms import DataForm
+from .models import Data
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -330,3 +334,86 @@ def delete_problem(request, pk):
     problem.delete()
     messages.success(request, "문제가 성공적으로 삭제되었습니다.")
     return redirect('user_problems')
+
+# 질문 생성
+@login_required
+def qa_creation(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.author = request.user
+            question.save()
+            messages.success(request, '질문이 성공적으로 등록되었습니다.')
+            return redirect('qa_board')
+    else:
+        form = QuestionForm()
+    return render(request, 'qa_creation.html', {'form': form})
+
+@login_required
+def qa_edit(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    
+    if question.author != request.user:
+        messages.error(request, "You are not authorized to edit this question.")
+        return redirect('qa_board')
+    
+    if request.method == 'POST':
+        form = QuestionForm(request.POST, instance=question)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '질문이 성공적으로 수정되었습니다.')
+            return redirect('question_detail', question_id=question.id)
+    else:
+        form = QuestionForm(instance=question)
+    
+    return render(request, 'qa_edit.html', {'form': form, 'question': question})
+
+def qa_board(request):
+    questions = Question.objects.all().order_by('-created_at')
+    return render(request, 'qa_board.html', {'questions': questions})
+
+def question_detail(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    return render(request, 'question_detail.html', {'question': question})
+
+def resources_board(request):
+    datas = Data.objects.all().order_by('-created_at')
+    return render(request, 'resources-board.html', {'datas': datas})
+
+@login_required
+def data_upload(request):
+    if request.method == 'POST':
+        form = DataForm(request.POST)
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.author = request.user  # 현재 로그인한 사용자를 작성자로 설정
+            data.save()
+            messages.success(request, '자료가 성공적으로 업로드되었습니다.')
+            return redirect('resources_board')  # 업로드 후 자료 게시판으로 리다이렉트
+    else:
+        form = DataForm()
+    
+    return render(request, 'data_upload.html', {'form': form})
+
+
+@login_required
+def data_edit(request, data_id):
+    data = get_object_or_404(Data, id=data_id)
+    if data.author != request.user:
+        messages.error(request, '수정 권한이 없습니다.')
+        return redirect('resources_board')
+    
+    if request.method == 'POST':
+        form = DataForm(request.POST, request.FILES, instance=data)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '자료가 성공적으로 수정되었습니다.')
+            return redirect('data_detail', data_id=data.id)
+    else:
+        form = DataForm(instance=data)
+    return render(request, 'data_edit.html', {'form': form, 'data': data})
+
+def data_detail(request, data_id):
+    data = get_object_or_404(Data, id=data_id)
+    return render(request, 'data_detail.html', {'data': data})
