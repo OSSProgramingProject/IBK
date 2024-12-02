@@ -25,12 +25,8 @@ urlpatterns = [
     path('follow/', views.follow_user, name='follow_user'),
     path('send_message/', views.send_message, name='send_message'),
     path('add_friend/', views.add_friend, name='add_friend'),
-    path('blog_creat/', views.blog_create, name='blog_creation'),  # 블로그 작성 페이지
-    path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
-    path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
-    path('blog/search/', views.blog_search, name='blog_search'),
     path('problem-creation/', views.create_problem, name='problem_creation'),
-    path('user_problem/', views.user_problems, name='user_problems'),
+    path('user_problem/', views.user_problem, name='user_problem'),
     path('problem/<int:pk>/', views.problem_detail, name='problem_detail'),
     path('problem/<int:pk>/edit/', views.edit_problem, name='edit_problem'),
     path('problem/delete/<int:pk>/', views.delete_problem, name='delete_problem'),  # 삭제 URL 추가
@@ -40,6 +36,11 @@ urlpatterns = [
     path('data/upload/', views.data_upload, name='data_upload'),  # 자료 업로드
     path('data/<int:data_id>/', views.data_detail, name='data_detail'),  # 자료 상세 보기
     path('data/<int:data_id>/edit/', views.data_edit, name='data_edit'),  # 자료 수정
+    path('blog_creat/', views.blog_create, name='blog_creation'),  # 블로그 작성 페이지
+    path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
+    path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
+    path('blog/search/', views.blog_search, name='blog_search'),
+    path('blog/delete/<int:pk>/', views.blog_delete, name='blog_delete'),
 
 
 

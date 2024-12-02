@@ -70,10 +70,30 @@
                                 <div class="card-body">
                                     <div class="small text-muted">{{ blog.created_at|date:"Y년 m월 d일" }}</div>
                                     <h2 class="card-title">{{ blog.title }}</h2>
-                                    <p class="card-text">{{ blog.content|truncatechars:100 }}</p>
+                                    <!--p class="card-text">{{ blog.content|truncatechars:100 }}</p-->
+                                    <!--h2 class="card-title">
+                                        {% if blog.problem_name %}
+                                            {{ blog.problem_name }}
+                                        {% else %}
+                                            {{ blog.title }}
+                                        {% endif %}
+                                    </h2-->
+                                    <p class="card-text">
+                                        {% if blog.problem_name %}
+                                        Problem: {{ blog.contest_id }} - {{ blog.index }} ({{ blog.problem_name }})<br>
+                                        Tags : {{ blog.tags }}
+                                        {% else %}
+                                            {{ blog.content|truncatechars:100 }}
+                                        {% endif %}
+                                    </p>
+
                                     <a class="btn btn-primary" href="{% url 'blog_detail' blog.pk %}">자세히 보기 →</a>
                                     {% if blog.author == user %}
-                                        <a href="{% url 'blog_edit' blog.pk %}" class="btn btn-warning">수정</a>
+                                        <a href="{% url 'blog_edit' blog.pk %}?source=blog" class="btn btn-warning">수정</a>
+                                        <form method="POST" action="{% url 'blog_delete' blog.pk %}?source=blog" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">삭제</button>
+                                        </form>
                                     {% endif %}
                                 </div>
                             </div>

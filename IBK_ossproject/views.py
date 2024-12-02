@@ -4,20 +4,15 @@ from django.http import HttpResponse
 from .models import UserProfile
 from django.contrib import messages
 from .forms import UserRegisterForm
-from .forms import ProblemForm
-from .models import Problem
-from .forms import QuestionForm
-from .models import Question
-from .forms import DataForm
-from .models import Data
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
-from .models import Follow, Friendship, Message, BlogPost
-from .forms import FollowForm, MessageForm, BlogPostForm
+from .models import Follow, Friendship, Message, BlogPost, Problem, Question, Data
+from .forms import FollowForm, MessageForm, BlogPostForm, ProblemForm, QuestionForm, DataForm
 from django.db.models import Q
+from django.db import models
 from django.core.paginator import Paginator
 import requests
 import random
@@ -102,21 +97,60 @@ def add_friend(request):
 
     return redirect('profile_management')
 
+
+
+    
+
+
 @login_required
 def blog_create(request):
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            form.save()
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+
+            # 문제 정보가 있으면 저장
+            blog_post.contest_id = request.POST.get('contest_id', '')
+            blog_post.index = request.POST.get('index', '')
+            blog_post.problem_name = request.POST.get('problem_name', '')
+            blog_post.tags = request.POST.get('tags', '')
+
+            blog_post.save()
             return redirect('blog_post')
     else:
-        form = BlogPostForm(user=request.user)
+        # 문제 풀기 버튼에서 넘어온 문제 정보 가져오기
+        contest_id = request.GET.get('contestId', '')
+        index = request.GET.get('index', '')
+        name = request.GET.get('name', '')
+        tags = request.GET.get('tags', '')
 
-    return render(request, 'blog_creation.html', {'form': form})
+        # 문제 정보가 있다면 초기 내용 작성
+        initial_content = ""
+        if contest_id and index and name:
+            initial_content = f"Problem: {contest_id} - {index} ({name})\nTags: {tags}\n\nPlease describe your solution here..."
+
+        # 초기 값을 포함한 폼 생성
+        form = BlogPostForm(user=request.user, initial={'content': initial_content})
+
+    return render(request, 'blog_creation.html', {
+        'form': form,
+        'contest_id': contest_id,
+        'index': index,
+        'problem_name': name,
+        'tags': tags
+    })
 
 
 def blog_post(request):
-    blog_posts = BlogPost.objects.all().order_by('-created_at')
+    # 로그인한 사용자의 게시글과 전체공개 게시글만 가져오기
+    if request.user.is_authenticated:
+        blog_posts = BlogPost.objects.filter(
+            models.Q(visibility='public') | models.Q(author=request.user)
+        )
+    else:
+        blog_posts = BlogPost.objects.filter(visibility='public')
+    
     return render(request, 'blog-post.html', {'blog_posts': blog_posts})
 
 def blog_detail(request, pk):
@@ -127,22 +161,52 @@ def blog_detail(request, pk):
 def blog_edit(request, pk):
     blog_post = get_object_or_404(BlogPost, pk=pk)
 
+    # 작성자가 아닌 사용자가 접근하려고 할 때
     if blog_post.author != request.user:
         messages.error(request, "You are not authorized to edit this blog post.")
         return redirect('blog_post')
 
+    # POST 요청 시 폼 처리
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES, instance=blog_post, user=request.user)
-
+        
         if form.is_valid():
             form.save()
             messages.success(request, "Blog post updated successfully.")
-            return redirect('blog_detail', pk=blog_post.pk)
+
+            # 수정 후 돌아갈 페이지 결정
+            source = request.GET.get('source', 'blog')
+            if source == 'user_problem':
+                return redirect('user_problem')
+            else:
+                return redirect('blog_post')
+
+    # GET 요청 시 폼 초기화
     else:
         form = BlogPostForm(instance=blog_post, user=request.user)
 
     return render(request, 'blog_edit.html', {'form': form, 'blog_post': blog_post})
 
+@login_required
+def blog_delete(request, pk):
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+
+    # 작성자인지 확인
+    if blog_post.author == request.user:
+        blog_post.delete()
+        messages.success(request, "Blog post deleted successfully.")
+
+        # 삭제 후 돌아갈 페이지 결정
+        source = request.GET.get('source', 'blog')
+        if source == 'user_problem':
+            return redirect('user_problem')
+        else:
+            return redirect('blog_post')
+    else:
+        # 작성자가 아닌 경우 접근 거부 처리
+        messages.error(request, "You are not authorized to delete this blog post.")
+        return redirect('blog_detail', pk=pk)
+    
 def blog_search(request):
     query = request.GET.get('q')
     blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
@@ -286,7 +350,7 @@ def create_problem(request):
             problem.author = request.user
             problem.save()
             print("문제 저장 완료:")  # 디버깅: 저장된 데이터 확인
-            return redirect('user_problems')
+            return redirect('user_problem')
         else:
             print("폼 유효성 실패:", form.errors)  # 디버깅: 유효성 실패 이유 출력
     else:
@@ -294,11 +358,24 @@ def create_problem(request):
     return render(request, 'problem-creation.html', {'form': form})
 
 @login_required
-def user_problems(request):
+def user_problem(request):
+    # 사용자가 작성한 문제 목록 가져오기
     user_problems = Problem.objects.filter(author=request.user)
-    return render(request, 'user_problem.html', {'user_problems': user_problems})
 
+    # 사용자가 작성한 블로그 게시글 목록 가져오기
+    user_blogs = BlogPost.objects.filter(author=request.user)
 
+    # 공개된 마지막 게시글 가져오기 (예시)
+    latest_post = BlogPost.objects.filter(visibility='public').last()
+
+    # 템플릿에 전달할 데이터
+    context = {
+        'user_problems': user_problems,
+        'user_blogs': user_blogs,
+        'latest_post': latest_post,
+    }
+
+    return render(request, 'user_problem.html', context)
 
 @login_required
 def problem_detail(request, pk):
@@ -328,12 +405,12 @@ def delete_problem(request, pk):
     # 현재 사용자와 문제 작성자 비교
     if problem.author != request.user:
         messages.error(request, "삭제 권한이 없습니다.")
-        return redirect('user_problems')
+        return redirect('user_problem')
 
     # 문제 삭제
     problem.delete()
     messages.success(request, "문제가 성공적으로 삭제되었습니다.")
-    return redirect('user_problems')
+    return redirect('user_problem')
 
 # 질문 생성
 @login_required

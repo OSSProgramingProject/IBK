@@ -13,10 +13,28 @@
                                 <div class="small text-muted">작성자: <strong>{{ blog.author.username }}</strong> | 작성일: {{ blog.created_at|date:"Y년 m월 d일 H:i" }}</div>
                                 <div class="badge bg-secondary text-white">{{ blog.category }}</div>
                             </div>
+                            <!-- 문제 정보 섹션 추가 -->
+                            {% if blog.problem_name %}
+                            <div class="small text-muted">question</div>
+                            <div class="problem-item border p-4 mb-3 rounded">
+                                    <div class="mb-4">
+                                        <p><strong>문제 이름:</strong> {{ blog.problem_name }}</p>
+                                        <p><strong>Contest ID:</strong> {{ blog.contest_id }}</p>
+                                        <p><strong>Index:</strong> {{ blog.index }}</p>
+                                        <p><strong>Tags:</strong> {{ blog.tags }}</p>
+                                        <div class="d-grid gap-2 mt-3">
+                                            <a href="https://codeforces.com/contest/{{ blog.contest_id }}/problem/{{ blog.index }}" class="btn btn-primary" target="_blank">문제 바로가기</a>
+                                        </div>
+                                    </div>
+                            </div>
+                            {% endif %}
                             {% if blog.image %}
                                 <img class="img-fluid rounded mb-4" src="{{ blog.image.url }}" alt="블로그 이미지">
                             {% endif %}
-                            <p class="fs-5 mb-4">{{ blog.content }}</p>
+                            <div class="small text-muted">content</div>
+                            <div class="problem-item border p-4 mb-3 rounded">
+                                <p class="fs-5 mb-4">{{ blog.content }}</p>
+                            </div>
                             <div class="d-flex justify-content-end">
                                 <a href="{% url 'blog_post' %}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
                             </div>
