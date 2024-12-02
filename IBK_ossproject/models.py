@@ -45,6 +45,8 @@ class Problem(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField()
+    example_input = models.TextField(blank=True, null=True)
+    example_output = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='problems/', blank=True, null=True)
     category = models.CharField(max_length=100, blank=True, null=True)
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, blank=True, null=True)

@@ -33,6 +33,7 @@ urlpatterns = [
     path('user_problem/', views.user_problems, name='user_problems'),
     path('problem/<int:pk>/', views.problem_detail, name='problem_detail'),
     path('problem/<int:pk>/edit/', views.edit_problem, name='edit_problem'),
+    path('problem/delete/<int:pk>/', views.delete_problem, name='delete_problem'),  # 삭제 URL 추가
 
 
 

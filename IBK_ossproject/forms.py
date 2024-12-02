@@ -45,6 +45,6 @@ class BlogPostForm(forms.ModelForm):
 class ProblemForm(forms.ModelForm):
     class Meta:
         model = Problem
-        fields = ['title', 'description', 'image', 'category', 'difficulty',]
+        fields = ['title', 'description', 'image', 'category', 'difficulty', 'example_input', 'example_output']
         
 

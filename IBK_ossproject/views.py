@@ -277,6 +277,8 @@ def create_problem(request):
         form = ProblemForm(request.POST, request.FILES)
         if form.is_valid():
             problem = form.save(commit=False)
+            problem.example_input = form.cleaned_data.get('example_input')
+            problem.example_output = form.cleaned_data.get('example_output')
             problem.author = request.user
             problem.save()
             print("문제 저장 완료:")  # 디버깅: 저장된 데이터 확인
@@ -289,7 +291,7 @@ def create_problem(request):
 
 @login_required
 def user_problems(request):
-    user_problems = Problem.objects.all().order_by('-created_at')
+    user_problems = Problem.objects.filter(author=request.user)
     return render(request, 'user_problem.html', {'user_problems': user_problems})
 
 
@@ -315,3 +317,16 @@ def edit_problem(request, pk):
         form = ProblemForm(instance=problem)
     return render(request, 'problem_edit.html', {'form': form, 'problem': problem})
 
+
+@login_required
+def delete_problem(request, pk):
+    problem = get_object_or_404(Problem, pk=pk)
+    # 현재 사용자와 문제 작성자 비교
+    if problem.author != request.user:
+        messages.error(request, "삭제 권한이 없습니다.")
+        return redirect('user_problems')
+
+    # 문제 삭제
+    problem.delete()
+    messages.success(request, "문제가 성공적으로 삭제되었습니다.")
+    return redirect('user_problems')
