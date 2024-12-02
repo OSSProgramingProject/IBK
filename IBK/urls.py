@@ -32,7 +32,7 @@ urlpatterns = [
     path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
     path('blog/edit/<int:pk>/', views.blog_edit, name='blog_edit'),
     path('blog/search/', views.blog_search, name='blog_search'),
-
+    path('blog/delete/<int:pk>/', views.blog_delete, name='blog_delete'),
 
 
     

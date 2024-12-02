@@ -172,6 +172,17 @@ def blog_edit(request, pk):
 
     return render(request, 'blog_edit.html', {'form': form, 'blog_post': blog_post})
 
+@login_required
+def blog_delete(request, pk):
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+    # 작성자인지 확인
+    if blog_post.author == request.user:
+        blog_post.delete()
+        return redirect('blog_post')
+    else:
+        # 작성자가 아닌 경우 접근 거부 처리
+        return redirect('blog_detail', pk=pk)
+    
 def blog_search(request):
     query = request.GET.get('q')
     blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
