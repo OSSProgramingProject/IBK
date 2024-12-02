@@ -112,6 +112,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                <a href="{% url 'blog_edit' blog.pk %}" class="btn btn-outline-primary btn-sm position-relative" style="z-index: 1;">수정</a>
+                                <a href="{% url 'blog_delete' blog.pk %}" class="btn btn-outline-danger btn-sm position-relative ms-2" style="z-index: 1;">삭제</a>
                             </div>
                         </div>
                     </div>
