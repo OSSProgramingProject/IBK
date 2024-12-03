@@ -400,7 +400,7 @@ def question_bank(request):
     problems = paginator.get_page(page_number)
 
     # 템플릿에 데이터를 전달하며 렌더링
-    return render(request, 'question-bank.html', {'problems': problems, 'tags': search_tags, 'difficulty': difficulty, 'rating_range': range(100, 4501, 100)})
+    return render(request, 'question-bank.html', {'problems': problems, 'tags': search_tags, 'difficulty': difficulty, 'rating_range': range(800, 3501, 100)})
 
 
 def create_problem(request):
