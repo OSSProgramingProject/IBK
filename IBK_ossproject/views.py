@@ -16,10 +16,12 @@ from django.db.models import Q
 from django.db import models
 from django.core.paginator import Paginator
 from .models import Question, Comment
+from django.http import JsonResponse
 from .forms import CommentForm
 import requests
 import random
 import string
+import json
 
 # 기존 뷰 함수들
 def home(request):
@@ -485,6 +487,7 @@ def qa_edit(request, question_id):
     
     return render(request, 'qa_edit.html', {'form': form, 'question': question})
 
+@login_required
 def question_detail(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     comments = Comment.objects.filter(question=question).order_by('created_at')
@@ -510,6 +513,31 @@ def add_comment(request, question_id):
         else:
             messages.error(request, '댓글을 등록하는 데 문제가 발생했습니다. 다시 시도해주세요.')
     return redirect('question_detail', question_id=question.id)
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))  # 데이터를 UTF-8로 디코딩
+        content = data.get('content', '').strip()
+        if content:
+            comment.content = content
+            comment.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': '내용을 입력해주세요.'}, json_dumps_params={'ensure_ascii': False})
+    return JsonResponse({'success': False, 'error': '잘못된 요청입니다.'}, json_dumps_params={'ensure_ascii': False})
+
+# 댓글 삭제 뷰
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+    if request.method == 'POST':
+        question_id = comment.question.id
+        comment.delete()
+        messages.success(request, '댓글이 성공적으로 삭제되었습니다.')
+        return redirect('question_detail', question_id=question_id)
+    return render(request, 'confirm_delete.html', {'comment': comment})
 
 @login_required
 def delete_question(request, question_id):

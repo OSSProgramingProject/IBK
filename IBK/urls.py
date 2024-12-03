@@ -46,6 +46,8 @@ urlpatterns = [
     path('delete_message/<int:message_id>/', views.delete_message, name='delete_message'),
     path('delete_received_message/<int:message_id>/', views.delete_received_message, name='delete_received_message'),
     path('question/<int:question_id>/add_comment/', views.add_comment, name='add_comment'),
+    path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
+    path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
