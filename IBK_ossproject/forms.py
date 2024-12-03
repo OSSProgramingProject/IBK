@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import BlogPost
 from .models import Problem
 from .models import Question
+from .models import Comment
 from .models import Data
 
 
@@ -73,4 +74,12 @@ class DataForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'placeholder': '질문의 제목을 입력하세요'}),
             'category': forms.Select(),
             'content': forms.Textarea(attrs={'placeholder': '질문 내용을 입력하세요', 'rows': 10}),  # 'content' 필드에 위젯 추가
+        }
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'placeholder': '댓글을 작성하세요...', 'rows': 3}),
         }

@@ -15,6 +15,8 @@ from .forms import FollowForm, MessageForm, BlogPostForm, ProblemForm, QuestionF
 from django.db.models import Q
 from django.db import models
 from django.core.paginator import Paginator
+from .models import Question, Comment
+from .forms import CommentForm
 import requests
 import random
 import string
@@ -485,7 +487,29 @@ def qa_edit(request, question_id):
 
 def question_detail(request, question_id):
     question = get_object_or_404(Question, id=question_id)
-    return render(request, 'question_detail.html', {'question': question})
+    comments = Comment.objects.filter(question=question).order_by('created_at')
+    
+    context = {
+        'question': question,
+        'comments': comments,
+    }
+    return render(request, 'question_detail.html', context)
+
+# 댓글 추가 뷰
+@login_required
+def add_comment(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.question = question
+            comment.save()
+            messages.success(request, '댓글이 성공적으로 등록되었습니다.')
+        else:
+            messages.error(request, '댓글을 등록하는 데 문제가 발생했습니다. 다시 시도해주세요.')
+    return redirect('question_detail', question_id=question.id)
 
 @login_required
 def delete_question(request, question_id):
