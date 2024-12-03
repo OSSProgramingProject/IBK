@@ -186,7 +186,7 @@ def blog_post(request):
     if request.user.is_authenticated:
         blog_posts = BlogPost.objects.filter(
             models.Q(visibility='public') | models.Q(author=request.user)
-        )
+        ).order_by('-created_at')
     else:
         blog_posts = BlogPost.objects.filter(visibility='public')
     
@@ -251,6 +251,15 @@ def blog_search(request):
     blog_posts = BlogPost.objects.filter(title__icontains=query) if query else []
     return render(request, 'blog-post.html', {'blog_posts': blog_posts, 'query': query})
 
+def blog_category_search(request):
+    category = request.GET.get('category', '').strip()
+
+    if category:
+        blog_posts = BlogPost.objects.filter(category__icontains=category)
+    else:
+        blog_posts = []
+
+    return render(request, 'blog-post.html', {'blog_posts': blog_posts, 'category': category})
 
 def question_bank(request):
     return render(request, 'question-bank.html')

@@ -27,14 +27,10 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="category" class="form-label">카테고리</label>
-                                    <select class="form-select" id="category" name="category" required>
-                                        <option value="">카테고리를 선택하세요</option>
-                                        <option value="알고리즘">알고리즘</option>
-                                        <option value="자료구조">자료구조</option>
-                                        <option value="수학">수학</option>
-                                        <option value="기타">기타</option>
-                                    </select>
+                                    <!-- 사용자가 직접 입력할 수 있는 input 태그로 변경 -->
+                                    <input type="text" class="form-control" id="category" name="category" placeholder="카테고리를 입력하세요" required>
                                 </div>
+                                
                                 {% if form.initial.content %}<div class="mb-3">
                                     <label for="problem" class="form-label">문제</label>
                                     <textarea class="form-control" id="problem" name="problem" rows="5" readonly>{{ form.initial.content }}</textarea>

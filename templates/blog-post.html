@@ -106,29 +106,20 @@
 
             <!-- 사이드바 -->
             <div class="col-lg-3">
-                <!-- 카테고리 위젯 -->
+                <!-- 카테고리 검색 위젯 -->
                 <div class="card mb-4">
-                    <div class="card-header">카테고리</div>
+                    <div class="card-header">카테고리 검색</div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <ul class="list-unstyled mb-0">
-                                    <li><a href="#!">웹 디자인</a></li>
-                                    <li><a href="#!">HTML</a></li>
-                                    <li><a href="#!">CSS</a></li>
-                                </ul>
+                        <form method="GET" action="{% url 'blog_category_search' %}">
+                            <div class="input-group">
+                                <input class="form-control" type="text" name="category" placeholder="카테고리를 입력하세요..." value="{{ category|default_if_none:'' }}">
+                                <button class="btn btn-primary" type="submit">검색</button>
                             </div>
-                            <div class="col-sm-6">
-                                <ul class="list-unstyled mb-0">
-                                    <li><a href="#!">JavaScript</a></li>
-                                    <li><a href="#!">튜토리얼</a></li>
-                                    <li><a href="#!">무료 자료</a></li>
-                                </ul>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-                <!-- 사이드 블로그 게시 버튼 -->
+
+                <!-- 기존 블로그 게시 버튼 -->
                 <div class="card mb-4">
                     <div class="card-header">블로그 게시하기</div>
                     <div class="card-body">
@@ -136,6 +127,9 @@
                     </div>
                 </div>
             </div>
+
+
+            
         </div>
     </div>
 {% endblock %}

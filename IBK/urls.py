@@ -48,7 +48,7 @@ urlpatterns = [
     path('question/<int:question_id>/add_comment/', views.add_comment, name='add_comment'),
     path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
     path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
-
+    path('blog/category-search/', views.blog_category_search, name='blog_category_search'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
