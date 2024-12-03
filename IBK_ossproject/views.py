@@ -648,3 +648,13 @@ def user_generated_question_bank(request):
         'difficulty': difficulty,
         'tags': ','.join(tags) if tags != [''] else '',
     })
+
+def user_problem_solving_creation(request, problem_id):
+    # 문제 ID를 이용해 문제 정보를 가져오기
+    problem = get_object_or_404(Problem, pk=problem_id)
+    
+    # 문제 정보를 템플릿에 넘겨주기
+    return render(request, 'user_problem_solving_creation.html', {
+        'problem': problem,
+    })
+

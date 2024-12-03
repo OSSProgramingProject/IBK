@@ -41,7 +41,7 @@
                     <p>{{ problem.tags|join:", " }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{% url 'problem_detail' problem.pk %}" class="btn btn-link" target="_blank">View Problem</a>
-                        <a href="{% url 'blog_creation' %}?problem_id={{ problem.pk }}" class="btn btn-secondary ml-auto">문제 풀기</a>
+                        <a href="{% url 'user_problem_solving_creation' problem_id=problem.id %}" class="btn btn-primary">문제 풀기</a>
                     </div>
                 </div>
             {% empty %}
