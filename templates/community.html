@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load duration %}
+
 {% block title %}커뮤니티 - 아이디어뱅크{% endblock %}
 
 {% block content %}
@@ -61,21 +63,16 @@
             <!-- Announcements & Events Section -->
             <h2 class="fw-bolder mb-3">공지사항 & 이벤트</h2>
             <div class="list-group">
-                <div class="list-group-item">
-                    <h5 class="mb-1">다가오는 해커톤</h5>
-                    <p class="mb-1">코딩 실력을 시험할 수 있는 해커톤에 참여하세요!</p>
-                    <small>행사 날짜: 2024년 12월 25일</small>
-                </div>
-                <div class="list-group-item">
-                    <h5 class="mb-1">커뮤니티 모임</h5>
-                    <p class="mb-1">학습자들과 만나 아이디어를 공유해 보세요!</p>
-                    <small>행사 날짜: 2025년 1월 10일</small>
-                </div>
-                <div class="list-group-item">
-                    <h5 class="mb-1">웹 개발 웨비나</h5>
-                    <p class="mb-1">웹 개발 기술을 향상시킬 수 있는 웨비나에 참석하세요!</p>
-                    <small>행사 날짜: 2025년 2월 20일</small>
-                </div>
+                {% for contest in contests %}
+                    <div class="list-group-item">
+                        <h5 class="mb-1">{{ contest.name }}</h5>
+                        <p class="mb-1">시작 날짜: {{ contest.startTimeSeconds|date:"Y년 m월 d일 H:i" }}</p>
+                        <small>Duration: {{ contest.durationSeconds|duration }}</small>
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="https://codeforces.com/contest/{{ contest.id }}" class="btn btn-outline-primary" target="_blank">대회 바로가기</a>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </section>

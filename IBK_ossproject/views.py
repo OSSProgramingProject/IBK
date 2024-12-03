@@ -256,7 +256,20 @@ def question_bank(request):
     return render(request, 'question-bank.html')
 
 def community(request):
-    return render(request, 'community.html')
+    # Codeforces API에서 컨테스트 정보 가져오기
+    url = "https://codeforces.com/api/contest.list"
+    response = requests.get(url)
+    contests = []
+    if response.status_code == 200:
+        data = response.json()
+        if data["status"] == "OK":
+            # 상위 3개의 다가오는 컨테스트만 가져오기
+            contests = [contest for contest in data["result"] if contest["phase"] == "BEFORE"][:3]
+    
+    context = {
+        "contests": contests
+    }
+    return render(request, 'community.html', context)
 
 def signup(request):
     if request.method == 'POST':
