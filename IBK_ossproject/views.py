@@ -74,6 +74,7 @@ def follow_user(request):
             return redirect('profile_management')
     return redirect('profile_management')
 
+@login_required
 def send_message(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -95,6 +96,15 @@ def send_message(request):
         form = MessageForm()
     
     return render(request, 'profile-management.html', {'form': form})
+
+@login_required
+def delete_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+    if request.method == 'POST':
+        message.delete()
+        messages.success(request, 'Message deleted successfully.')
+        return redirect('profile_management')
+    return render(request, 'confirm_delete.html', {'message': message})
 
 @login_required
 def add_friend(request):
