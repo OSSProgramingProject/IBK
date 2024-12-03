@@ -615,3 +615,36 @@ def data_delete(request, id):
         return HttpResponseForbidden("삭제 권한이 없습니다.")
     data.delete()
     return redirect('resources_board')
+
+@login_required
+def user_generated_question_bank(request):
+    # 데이터 처리 코드 추가 (예: 사용자 생성 문제 목록 가져오기)
+    user_problems = Problem.objects.all()  # 예시 코드, UserProblem 모델의 모든 문제 가져오기
+    return render(request, 'user_generated_question_bank.html', {'user_problems': user_problems})
+
+def user_generated_question_bank(request):
+    difficulty = request.GET.get('difficulty', '')
+    tags = request.GET.get('tags', '').split(',')
+
+    # 기본 문제 쿼리셋 생성
+    problems = Problem.objects.all()
+
+    # 난이도 필터링
+    if difficulty:
+        problems = problems.filter(difficulty=difficulty)
+
+    # 태그 필터링 (모든 태그에 대해 매칭되는 문제 찾기)
+    if tags and tags != ['']:
+        for tag in tags:
+            problems = problems.filter(tags__icontains=tag.strip())
+
+    # 페이지네이션 처리
+    paginator = Paginator(problems, 7)  # 페이지당 7개의 문제
+    page = request.GET.get('page')
+    user_problems = paginator.get_page(page)
+
+    return render(request, 'user_generated_question_bank.html', {
+        'user_problems': user_problems,
+        'difficulty': difficulty,
+        'tags': ','.join(tags) if tags != [''] else '',
+    })
