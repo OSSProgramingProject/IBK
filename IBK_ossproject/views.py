@@ -60,6 +60,8 @@ def profile_management(request):
         'user_name': request.user.username,
         'solved_problems': user_profile.solved_problems if user_profile else None,
         'friends': Friendship.objects.filter(Q(user1=request.user) | Q(user2=request.user)),
+        'messages_received': Message.objects.filter(receiver=request.user),
+        'messages_sent': Message.objects.filter(sender=request.user),
     }
     return render(request, 'profile-management.html', context)
 
@@ -76,11 +78,23 @@ def send_message(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
-            receiver = get_object_or_404(User, username=form.cleaned_data['receiver'])
+            receiver_username = form.cleaned_data['receiver']
             content = form.cleaned_data['content']
-            Message.objects.create(sender=request.user, receiver=receiver, content=content)
+            
+            # Check if the receiver exists
+            try:
+                receiver = User.objects.get(username=receiver_username)
+                # Create the message instance
+                Message.objects.create(sender=request.user, receiver=receiver, content=content)
+                messages.success(request, 'Message sent successfully.')
+            except User.DoesNotExist:
+                messages.error(request, 'The specified user does not exist.')
+                
             return redirect('profile_management')
-    return redirect('profile_management')
+    else:
+        form = MessageForm()
+    
+    return render(request, 'profile-management.html', {'form': form})
 
 @login_required
 def add_friend(request):

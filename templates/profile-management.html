@@ -142,7 +142,49 @@
                                 <textarea name="content" placeholder="Enter your message" class="form-control mb-2"></textarea>
                                 <button type="submit" class="btn btn-outline-secondary">Send Message</button>
                             </form>
+                            <!--주석>
+                            {% if messages %}
+                                <div class="mt-3">
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <주석-->
                         </div>
+                        <!--받은 메세지 표시-->
+                        <div class="mb-5">
+                            <h4 class="fw-bold">Messages Received</h4>
+                            <ul class="list-group mb-3">
+                                {% for message in messages_received %}
+                                    <li class="list-group-item">
+                                        <strong>From:</strong> {{ message.sender.username }}<br>
+                                        <strong>Message:</strong> {{ message.content }}<br>
+                                        <small><em>Sent at: {{ message.timestamp }}</em></small>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item">You have no messages received yet.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-5">
+                            <h4 class="fw-bold">Messages Sent</h4>
+                            <ul class="list-group mb-3">
+                                {% for message in messages_sent %}
+                                    <li class="list-group-item">
+                                        <strong>To:</strong> {{ message.receiver.username }}<br>
+                                        <strong>Message:</strong> {{ message.content }}<br>
+                                        <small><em>Sent at: {{ message.timestamp }}</em></small>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item">You have no messages sent yet.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
