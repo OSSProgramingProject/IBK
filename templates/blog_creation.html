@@ -28,7 +28,7 @@
                                 <div class="mb-3">
                                     <label for="category" class="form-label">카테고리</label>
                                     <!-- 사용자가 직접 입력할 수 있는 input 태그로 변경 -->
-                                    <input type="text" class="form-control" id="category" name="category" placeholder="카테고리를 입력하세요" required>
+                                    <input type="text" class="form-control" id="category" name="category" placeholder="카테고리를 입력하세요" value="{{ tags }}" required>
                                 </div>
                                 
                                 {% if form.initial.content %}<div class="mb-3">
