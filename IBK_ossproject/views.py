@@ -107,6 +107,16 @@ def delete_message(request, message_id):
     return render(request, 'confirm_delete.html', {'message': message})
 
 @login_required
+def delete_received_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, receiver=request.user)
+    if request.method == 'POST':
+        message.delete()
+        messages.success(request, 'Received message deleted successfully.')
+        return redirect('profile_management')
+    return render(request, 'confirm_delete.html', {'message': message})
+
+
+@login_required
 def add_friend(request):
     if request.method == 'POST':
         friend_username = request.POST.get('friend_username')

@@ -159,16 +159,23 @@
                             <h4 class="fw-bold">Messages Received</h4>
                             <ul class="list-group mb-3">
                                 {% for message in messages_received %}
-                                    <li class="list-group-item">
-                                        <strong>From:</strong> {{ message.sender.username }}<br>
-                                        <strong>Message:</strong> {{ message.content }}<br>
-                                        <small><em>Sent at: {{ message.timestamp }}</em></small>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>From:</strong> {{ message.sender.username }}<br>
+                                            <strong>Message:</strong> {{ message.content }}<br>
+                                            <small><em>Sent at: {{ message.timestamp }}</em></small>
+                                        </div>
+                                        <form method="POST" action="{% url 'delete_received_message' message.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
                                     </li>
                                 {% empty %}
                                     <li class="list-group-item">You have no messages received yet.</li>
                                 {% endfor %}
                             </ul>
                         </div>
+                        
                         
                         <div class="mb-5">
                             <h4 class="fw-bold">Messages Sent</h4>
