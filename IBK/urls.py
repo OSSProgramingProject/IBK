@@ -60,6 +60,7 @@ urlpatterns = [
     path('study-group/<int:group_id>/create-mission/', views.create_mission, name='create_mission'),
     path('mission/<int:mission_id>/upload-progress/', views.upload_progress, name='upload_progress'),
     path('mission/<int:mission_id>/delete/', views.delete_mission, name='delete_mission'),
+    path('study-group/<int:group_id>/delete/', views.delete_study_group, name='delete_study_group'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

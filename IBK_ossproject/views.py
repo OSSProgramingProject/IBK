@@ -767,3 +767,12 @@ def delete_mission(request, mission_id):
     else:
         messages.error(request, "미션을 삭제할 권한이 없습니다.")
     return redirect('study_group_detail', group_id=mission.group.id)
+
+def delete_study_group(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+    if request.user == group.owner:
+        group.delete()
+        messages.success(request, "스터디 그룹이 성공적으로 삭제되었습니다.")
+    else:
+        messages.error(request, "스터디 그룹을 삭제할 권한이 없습니다.")
+    return redirect('study_groups')

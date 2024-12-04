@@ -24,6 +24,7 @@
                     {% if missions.exists %}
                     <ul class="list-group">
                         {% for mission in missions %}
+                            {% if not mission.is_deleted %}
                             <li class="list-group-item">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -70,6 +71,7 @@
                                 {% endif %}
                                 {% endwith %}
                             </li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                     {% else %}
@@ -128,7 +130,7 @@
                         {% endif %}
                     {% endfor %}
                 </div>
-            </div>            
+            </div>
         </div>
     </div>
 </div>
