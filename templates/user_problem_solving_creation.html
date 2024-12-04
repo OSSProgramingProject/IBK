@@ -39,6 +39,7 @@
                                             <p><strong>문제 이름:</strong> {{ problem.title }}</p>
                                             <p><strong>문제 설명:</strong></p>
                                             <p>{{ problem.description }}</p>
+                                            <p><strong>입력 예제:</strong> {{ problem.example_input }}</p><p><strong>출력 예제:</strong> {{ problem.example_output }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -61,7 +62,7 @@
                                 </div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <button type="submit" class="btn btn-primary">게시글 등록</button>
-                                    <a href="{% url 'blog_post' %}" class="btn btn-secondary">취소</a>
+                                    <a href="{% url 'user_generated_question_bank' %}" class="btn btn-secondary">취소</a>
                                 </div>
                             </form>
                         </div>
