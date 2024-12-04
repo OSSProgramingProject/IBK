@@ -684,3 +684,10 @@ def join_study_group(request, group_id):
     if request.user not in group.members.all() and group.members.count() < group.capacity:
         group.members.add(request.user)
     return redirect('study_groups')  # 스터디 그룹 목록 페이지로 리다이렉트
+
+@login_required
+def leave_study_group(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+    if request.user in group.members.all():
+        group.members.remove(request.user)
+    return redirect('study_groups')  # 스터디 그룹 목록 페이지로 리다이렉트

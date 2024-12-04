@@ -54,7 +54,7 @@ urlpatterns = [
     path('study-groups/', views.study_groups, name='study_groups'),
     path('create-study-group/', views.create_study_group, name='create_study_group'),
     path('join-study-group/<int:group_id>/', views.join_study_group, name='join_study_group'),
-
+    path('leave-study-group/<int:group_id>/', views.leave_study_group, name='leave_study_group'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     #urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))

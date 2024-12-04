@@ -34,6 +34,11 @@
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary btn-sm">그룹 참여하기</button>
                     </form>
+                    {% elif user in group.members.all %}
+                    <form method="post" action="{% url 'leave_study_group' group.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">탈퇴하기</button>
+                    </form>
                     {% endif %}
                 </div>
             </div>
