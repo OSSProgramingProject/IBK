@@ -123,6 +123,7 @@ class StudyGroup(models.Model):
     name = models.CharField(max_length=100)
     topic = models.CharField(max_length=100)
     description = models.TextField()
+    capacity = models.PositiveIntegerField(default=10)  # 정원 필드 추가
     created_at = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, related_name='study_groups', blank=True)

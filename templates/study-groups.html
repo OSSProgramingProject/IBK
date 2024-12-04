@@ -18,9 +18,23 @@
                     <h5 class="card-title">{{ group.name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">주제: {{ group.topic }}</h6>
                     <p class="card-text">{{ group.description }}</p>
+                    <p class="card-text"><strong>정원:</strong> {{ group.capacity }}명</p>
+                    <p class="card-text"><strong>참여 멤버:</strong></p>
+                    <ul>
+                        <li>{{ group.owner.username }} (생성자)</li>
+                        {% for member in group.members.all %}
+                            <li>{{ member.username }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
-                <div class="card-footer text-muted">
-                    생성자: {{ group.owner.username }} - 생성일: {{ group.created_at|date:"Y년 m월 d일" }}
+                <div class="card-footer d-flex justify-content-between">
+                    <span class="text-muted">생성일: {{ group.created_at|date:"Y년 m월 d일" }}</span>
+                    {% if user not in group.members.all and group.members.count < group.capacity %}
+                    <form method="post" action="{% url 'join_study_group' group.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">그룹 참여하기</button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -36,4 +50,3 @@
     </div>
 </div>
 {% endblock %}
-

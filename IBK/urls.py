@@ -52,7 +52,8 @@ urlpatterns = [
     path('user_generated_question_bank/', views.user_generated_question_bank, name='user_generated_question_bank'),
     path('user_problem_solving/<int:problem_id>/', views.user_problem_solving_creation, name='user_problem_solving_creation'),
     path('study-groups/', views.study_groups, name='study_groups'),
-    path('create_study_group/', views.create_study_group, name='create_study_group'),
+    path('create-study-group/', views.create_study_group, name='create_study_group'),
+    path('join-study-group/<int:group_id>/', views.join_study_group, name='join_study_group'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:

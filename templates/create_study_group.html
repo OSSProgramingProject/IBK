@@ -29,6 +29,10 @@
                             <label for="id_description" class="form-label">설명</label>
                             {{ form.description|as_crispy_field }}
                         </div>
+                        <div class="mb-3">
+                            <label for="id_capacity" class="form-label">정원 (최대 참여 인원)</label>
+                            {{ form.capacity|as_crispy_field }}
+                        </div>
                         <button type="submit" class="btn btn-success w-100">스터디 그룹 생성하기</button>
                     </form>
                 </div>

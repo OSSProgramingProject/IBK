@@ -88,4 +88,4 @@ class CommentForm(forms.ModelForm):
 class StudyGroupForm(forms.ModelForm):
     class Meta:
         model = StudyGroup
-        fields = ['name', 'topic', 'description']
+        fields = ['name', 'topic', 'description', 'capacity']
