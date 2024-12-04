@@ -18,8 +18,9 @@ from django.core.paginator import Paginator
 from .models import Question, Comment
 from django.http import JsonResponse
 from .forms import CommentForm
-from .models import StudyGroup
+from .models import StudyGroup, Mission
 from .forms import StudyGroupForm
+from .forms import MissionForm
 import requests
 import random
 import string
@@ -708,3 +709,29 @@ def kick_member(request, group_id, user_id):
         messages.error(request, '강퇴할 권한이 없습니다.')
 
     return redirect('study_groups')  # 스터디 그룹 목록 페이지로 리다이렉트
+
+@login_required
+def study_group_detail(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+    missions = group.missions.all()  # 해당 그룹의 미션 목록
+    return render(request, 'study-group-detail.html', {'group': group, 'missions': missions})
+
+@login_required
+def create_mission(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+    if request.user != group.owner:
+        messages.error(request, "미션을 생성할 권한이 없습니다.")
+        return redirect('study_group_detail', group_id=group_id)
+
+    if request.method == 'POST':
+        form = MissionForm(request.POST)
+        if form.is_valid():
+            mission = form.save(commit=False)
+            mission.group = group
+            mission.save()
+            messages.success(request, "미션이 성공적으로 생성되었습니다.")
+            return redirect('study_group_detail', group_id=group_id)
+    else:
+        form = MissionForm()
+
+    return render(request, 'create-mission.html', {'form': form, 'group': group})

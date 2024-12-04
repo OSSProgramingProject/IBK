@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ group.name }} - 스터디 그룹 상세{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bolder display-4 text-primary">{{ group.name }}</h1>
+        <p class="lead fw-normal text-muted mb-3">주제: {{ group.topic }}</p>
+        <p class="text-muted fs-5">{{ group.description }}</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="fw-bolder mb-0">미션 설정 및 진행 사항</h2>
+                    {% if user == group.owner %}
+                    <a href="{% url 'create_mission' group.id %}" class="btn btn-light btn-sm">미션 추가</a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <p>그룹의 미션을 설정하고 그룹원들의 진행 상황을 공유하세요.</p>
+                    {% if missions.exists %}
+                    <ul class="list-group">
+                        {% for mission in missions %}
+                            <li class="list-group-item">
+                                <h5 class="mb-1">{{ mission.title }}</h5>
+                                <p class="mb-1">{{ mission.description }}</p>
+                                <small class="text-muted">마감일: {{ mission.deadline }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="alert alert-info">아직 추가된 미션이 없습니다.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h2 class="fw-bolder mb-0">참여 멤버</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ group.owner.username }} <span class="badge bg-primary rounded-pill">생성자</span>
+                        </li>
+                        {% for member in group.members.all %}
+                            <li class="list-group-item">{{ member.username }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -15,7 +15,9 @@
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">{{ group.name }}</h5>
+                    <h5 class="card-title">
+                        <a href="{% url 'study_group_detail' group.id %}">{{ group.name }}</a>
+                    </h5>
                     <h6 class="card-subtitle mb-2 text-muted">주제: {{ group.topic }}</h6>
                     <p class="card-text">{{ group.description }}</p>
                     <p class="card-text"><strong>정원:</strong> {{ group.capacity }}명</p>
@@ -23,16 +25,7 @@
                     <ul>
                         <li>{{ group.owner.username }} (생성자)</li>
                         {% for member in group.members.all %}
-                            <li>
-                                {{ member.username }}
-                                {% if user == group.owner and user != member %}
-                                <!-- 그룹 생성자일 경우, 본인 외의 멤버에 대해서만 강퇴 버튼을 표시 -->
-                                <form method="post" action="{% url 'kick_member' group.id member.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-danger">강퇴하기</button>
-                                </form>
-                                {% endif %}
-                            </li>
+                            <li>{{ member.username }}</li>
                         {% endfor %}
                     </ul>
                 </div>

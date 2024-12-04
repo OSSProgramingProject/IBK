@@ -56,7 +56,8 @@ urlpatterns = [
     path('join-study-group/<int:group_id>/', views.join_study_group, name='join_study_group'),
     path('leave-study-group/<int:group_id>/', views.leave_study_group, name='leave_study_group'),
     path('kick-member/<int:group_id>/<int:user_id>/', views.kick_member, name='kick_member'),
-
+    path('study-group/<int:group_id>/', views.study_group_detail, name='study_group_detail'),
+    path('study-group/<int:group_id>/create-mission/', views.create_mission, name='create_mission'),
 
 
 

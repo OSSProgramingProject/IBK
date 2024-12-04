@@ -7,6 +7,7 @@ from .models import Question
 from .models import Comment
 from .models import Data
 from .models import StudyGroup
+from .models import Mission
 
 
 
@@ -89,3 +90,8 @@ class StudyGroupForm(forms.ModelForm):
     class Meta:
         model = StudyGroup
         fields = ['name', 'topic', 'description', 'capacity']
+
+class MissionForm(forms.ModelForm):
+    class Meta:
+        model = Mission
+        fields = ['title', 'description', 'deadline']

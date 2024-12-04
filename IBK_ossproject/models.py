@@ -123,10 +123,20 @@ class StudyGroup(models.Model):
     name = models.CharField(max_length=100)
     topic = models.CharField(max_length=100)
     description = models.TextField()
-    capacity = models.PositiveIntegerField(default=10)  # 정원 필드 추가
+    capacity = models.PositiveIntegerField(default=10)
     created_at = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, related_name='study_groups', blank=True)
 
     def __str__(self):
         return self.name
+
+class Mission(models.Model):
+    group = models.ForeignKey(StudyGroup, on_delete=models.CASCADE, related_name='missions')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    deadline = models.DateField()
+    completed_members = models.ManyToManyField(User, related_name='completed_missions', blank=True)
+
+    def __str__(self):
+        return self.title
