@@ -12,11 +12,9 @@
                         
                         <!-- 로그인 상태 확인 -->
                         {% if user.is_authenticated %}
-                            <!-- 로그인 상태에서는 다른 메시지 표시 -->
                             <p class="text-white">환영합니다, {{ user.username }}님! 😊</p>
                             <a class="btn btn-light btn-lg px-4 me-sm-3" href="{% url 'question_bank' %}">문제 탐색하기</a>
                         {% else %}
-                            <!-- 비로그인 상태에서만 버튼 표시 -->
                             <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
                                 <a class="btn btn-light btn-lg px-4 me-sm-3" href="{% url 'login' %}">로그인</a>
                                 <a class="btn btn-outline-light btn-lg px-4" href="{% url 'signup' %}">회원가입</a>
@@ -28,47 +26,35 @@
         </div>
     </header>
 
-    <!-- 추천 문제 풀이 블로그 섹션 -->
     <section class="py-5" id="recommended-blogs">
-        <div class="container px-5 my-5">
-            <div class="text-center mb-5">
-                <h2 class="fw-bolder">추천 문제 풀이</h2>
-                <p class="lead mb-0">추천순으로 선별된 인기 문제 풀이를 확인해보세요.</p>
-            </div>
-            <div class="row gx-5">
-                <div class="col-lg-4 mb-5">
-                    <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="https://dummyimage.com/600x400/ced4da/6c757d" alt="블로그 이미지" />
-                        <div class="card-body p-4">
-                            <h5 class="card-title">추천 문제 1</h5>
-                            <p class="card-text">이 문제의 상세 풀이와 접근법을 확인해보세요.</p>
-                            <a class="btn btn-primary" href="{% url 'blog_post' %}">자세히 보기</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-5">
-                    <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="https://dummyimage.com/600x400/ced4da/6c757d" alt="블로그 이미지" />
-                        <div class="card-body p-4">
-                            <h5 class="card-title">추천 문제 2</h5>
-                            <p class="card-text">이 문제의 상세 풀이와 접근법을 확인해보세요.</p>
-                            <a class="btn btn-primary" href="{% url 'blog_post' %}">자세히 보기</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-5">
-                    <div class="card h-100 shadow border-0">
-                        <img class="card-img-top" src="https://dummyimage.com/600x400/ced4da/6c757d" alt="블로그 이미지" />
-                        <div class="card-body p-4">
-                            <h5 class="card-title">추천 문제 3</h5>
-                            <p class="card-text">이 문제의 상세 풀이와 접근법을 확인해보세요.</p>
-                            <a class="btn btn-primary" href="{% url 'blog_post' %}">자세히 보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">최신 문제 풀이</h2>
+            <p class="lead mb-0">최신 문제 풀이를 확인해보세요.</p>
         </div>
-    </section>
+        <div class="row gx-5">
+            {% for blog in recommended_blogs %}
+                <div class="col-lg-4 mb-5">
+                    <div class="card h-100 shadow border-0">
+                        {% if blog.image %}
+                            <img class="card-img-top" src="{{ blog.image.url }}" alt="{{ blog.title }}" />
+                        {% else %}
+                            <div class="card-img-top placeholder-image"></div>
+                        {% endif %}
+                        <div class="card-body p-4">
+                            <h5 class="card-title">{{ blog.title }}</h5>
+                            <p class="card-text">{{ blog.content|truncatewords:20 }}</p>
+                            <a class="btn btn-primary" href="{% url 'blog_detail' blog.id %}">자세히 보기</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center">최신 문제 풀이가 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+    
 
     <!-- 카테고리 섹션 -->
     <section class="py-5 bg-light" id="categories">
@@ -83,7 +69,7 @@
                         <div class="card-body p-4">
                             <h5 class="card-title">알고리즘</h5>
                             <p class="card-text">다양한 알고리즘 문제를 확인하고 해결해보세요.</p>
-                            <a class="btn btn-outline-primary" href="{% url 'question_bank' %}">카테고리 보기</a>
+                            <a class="btn btn-outline-primary" href="{% url 'question_bank' %}?tags=algorithm">카테고리 보기</a>
                         </div>
                     </div>
                 </div>
@@ -92,7 +78,7 @@
                         <div class="card-body p-4">
                             <h5 class="card-title">자료구조</h5>
                             <p class="card-text">자료구조 관련 문제를 탐색하세요.</p>
-                            <a class="btn btn-outline-primary" href="{% url 'question_bank' %}">카테고리 보기</a>
+                            <a class="btn btn-outline-primary" href="{% url 'question_bank' %}?tags=data%20structures">카테고리 보기</a>
                         </div>
                     </div>
                 </div>
@@ -101,15 +87,11 @@
                         <div class="card-body p-4">
                             <h5 class="card-title">수학</h5>
                             <p class="card-text">수학 문제를 찾아보고 풀어보세요.</p>
-                            <a class="btn btn-outline-primary" href="{% url 'question_bank' %}">카테고리 보기</a>
+                            <a class="btn btn-outline-primary" href="{% url 'question_bank' %}?tags=math">카테고리 보기</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
 {% endblock %}
-
-
-

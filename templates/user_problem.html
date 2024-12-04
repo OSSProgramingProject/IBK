@@ -5,27 +5,35 @@
 {% block content %}
 <section class="py-5">
     <div class="container px-5">
-        <h1 class="fw-bolder fs-5 mb-4">Company Blog</h1>
-        <div class="card border-0 shadow rounded-3 overflow-hidden">
-            <div class="card-body p-0">
-                <div class="row gx-0">
-                    <div class="col-lg-6 col-xl-5 py-lg-5">
-                        <div class="p-4 p-md-5">
-                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
-                            <div class="h2 fw-bolder">{{ latest_post.title }}</div>
-                            <p>{{ latest_post.content|truncatewords:20 }}</p>
-                            <a class="stretched-link text-decoration-none" href="{% if latest_post %}{% url 'post_detail' latest_post.id %}{% else %}#{% endif %}">
-                                Read more
-                                <i class="bi bi-arrow-right"></i>
-                            </a>
+        <h1 class="fw-bolder fs-5 mb-4">최신 블로그 게시물</h1>
+        {% if latest_post %}
+            <div class="card border-0 shadow rounded-3 overflow-hidden">
+                <div class="card-body p-0">
+                    <div class="row gx-0">
+                        <div class="col-lg-6 col-xl-5 py-lg-5">
+                            <div class="p-4 p-md-5">
+                                <div class="badge bg-primary bg-gradient rounded-pill mb-2">{{ latest_post.category|default:"카테고리 없음" }}</div>
+                                <div class="h2 fw-bolder">{{ latest_post.title }}</div>
+                                <p>{{ latest_post.content|truncatewords:20 }}</p>
+                                <a class="stretched-link text-decoration-none" href="{% url 'blog_detail' latest_post.id %}">
+                                    더 읽어보기
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-7">
-                        <div class="bg-featured-blog" style="background-image: url('{{ latest_post.image_url|default:'https://dummyimage.com/600x350/ced4da/6c757d' }}')"></div>
+                        <div class="col-lg-6 col-xl-7">
+                            {% if latest_post.image %}
+                                <div class="bg-featured-blog" style="background-image: url('{{ latest_post.image.url }}'); background-size: cover;"></div>
+                            {% else %}
+                                <div class="bg-featured-blog" style="background-color: #ced4da; height: 100%;"></div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% else %}
+            <p>아직 작성된 블로그 게시물이 없습니다.</p>
+        {% endif %}
     </div>
 </section>
 <section class="py-5 bg-light">
@@ -120,7 +128,7 @@
                     <br />
                     <a href="#">contact@domain.com</a>
                 </p>
-                <div class="h6 fw-bolder">팔로우하기</div>
+                <div class="h6 fw-bolder"></div>
                 <a class="fs-5 px-2 link-dark" href="#"><i class="bi-twitter"></i></a>
                 <a class="fs-5 px-2 link-dark" href="#"><i class="bi-facebook"></i></a>
                 <a class="fs-5 px-2 link-dark" href="#"><i class="bi-linkedin"></i></a>

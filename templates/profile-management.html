@@ -24,7 +24,6 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                        
                         {% if user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                         {% else %}
@@ -51,25 +50,25 @@
             <div class="container px-5 my-5">
                 <!-- Profile Section -->
                 <div class="text-center mb-5">
-                    <img src="https://dummyimage.com/150x150/343a40/ffffff" class="rounded-circle mb-3" alt="User Profile Picture" />
-                    <h1 class="fw-bolder">User Information</h1>
-                    <p class="text-muted">Solved Problems: <span class="badge bg-primary">{{ user_profile.solved_problems }}</span></p>
-                    <!-- Edit Profile Form -->
-                    <form method="POST" action="">
+                    <!-- 사용자 아이디 -->
+                    <h1 class="fw-bolder">{{ user.username }}</h1>
+
+                    <!-- 프로필 사진 수정 -->
+                    <form method="POST" action="{% url 'update_profile_image' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="text" name="user_name" class="form-control" placeholder="Enter new username" value="{{user_profile.user.username}}">
+                        <div>
+                            <label for="profile_image" class="d-inline-block">
+                                {% if user_profile.image %}
+                                    <img src="{{ user_profile.image.url }}" class="rounded-circle mb-3" alt="User Profile Picture" style="width: 150px; height: 150px; object-fit: cover;" />
+                                {% else %}
+                                    <img src="https://dummyimage.com/150x150/343a40/ffffff" class="rounded-circle mb-3" alt="User Profile Picture" />
+                                {% endif %}
+                            </label>
                         </div>
-                        <!-- <div class="mb-3">
-                            <input type="text" name="user_password" class="form-control" placeholder="Enter new password" value="User Password">
+                        <div class="mt-3">
+                            <input type="file" id="profile_image" name="image" class="form-control mb-2" />
+                            <button type="submit" class="btn btn-outline-primary">프로필 사진 변경</button>
                         </div>
-                        <div class="mb-3">
-                            <input type="text" name="user_email" class="form-control" placeholder="Enter new email" value="User E-mail">
-                        </div> -->
-                        <div class="mb-3">
-                            <input type="number" name="solved_problems" class="form-control" placeholder="Solved problems" value="{{ user_profile.solved_problems }}">
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary mb-3">Save Changes</button>
                     </form>
                 </div>
                 
@@ -77,9 +76,9 @@
                 <div class="mb-5">
                     <h2 class="fw-bolder mb-4">Activity History</h2>
                     <ul class="list-group">
-                        <li class="list-group-item">Solved problem <strong>#123</strong> on <em>2023-11-01</em></li>
-                        <li class="list-group-item">Wrote a solution for problem <strong>#101</strong></li>
-                        <li class="list-group-item">Followed <strong>user_xyz</strong></li>
+                        <li class="list-group-item">계정 생성일: <strong>{{ user.userprofile.account_created_date|date:"Y년 m월 d일 H:i" }}</strong></li>
+                        <li class="list-group-item">해결한 문제 수: <strong>{{ user.userprofile.solved_problem_count }}</strong></li>
+                        <li class="list-group-item">생성한 문제 수: <strong>{{ user.userprofile.created_problem_count }}</strong></li>
                     </ul>
                 </div>
 
@@ -87,26 +86,6 @@
                 <div class="mb-5">
                     <h2 class="fw-bolder mb-4">Social</h2>
                     <div class="row">
-                        <!-- Followed Users >
-                        <div class="col-lg-6">
-                            <h4 class="fw-bold">Following</h4>
-                            <ul class="list-group mb-3">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>user_xyz</span>
-                                    <button class="btn btn-sm btn-outline-danger">Unfollow</button>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>user_abc</span>
-                                    <button class="btn btn-sm btn-outline-danger">Unfollow</button>
-                                </li>
-                            </ul-->
-                            <!-- Follow Form >
-                            <form method="POST" action="{% url 'follow_user' %}">
-                                {% csrf_token %}
-                                <input type="text" name="user_to_follow" placeholder="Enter username to follow" class="form-control mb-2">
-                                <button type="submit" class="btn btn-outline-success">Follow</button>
-                            </form>
-                        </div-->
                         <!-- Friends List -->
                         <div class="col-lg-6">
                             <h4 class="fw-bold">Friends</h4>
@@ -142,63 +121,7 @@
                                 <textarea name="content" placeholder="Enter your message" class="form-control mb-2"></textarea>
                                 <button type="submit" class="btn btn-outline-secondary">Send Message</button>
                             </form>
-                            <!--주석>
-                            {% if messages %}
-                                <div class="mt-3">
-                                    {% for message in messages %}
-                                        <div class="alert alert-{{ message.tags }}">
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            <주석-->
                         </div>
-                        <!--받은 메세지 표시-->
-                        <div class="mb-5">
-                            <h4 class="fw-bold">Messages Received</h4>
-                            <ul class="list-group mb-3">
-                                {% for message in messages_received %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>From:</strong> {{ message.sender.username }}<br>
-                                            <strong>Message:</strong> {{ message.content }}<br>
-                                            <small><em>Sent at: {{ message.timestamp }}</em></small>
-                                        </div>
-                                        <form method="POST" action="{% url 'delete_received_message' message.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                        </form>
-                                    </li>
-                                {% empty %}
-                                    <li class="list-group-item">You have no messages received yet.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        
-                        
-                        <div class="mb-5">
-                            <h4 class="fw-bold">Messages Sent</h4>
-                            <ul class="list-group mb-3">
-                                {% for message in messages_sent %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>To:</strong> {{ message.receiver.username }}<br>
-                                            <strong>Message:</strong> {{ message.content }}<br>
-                                            <small><em>Sent at: {{ message.timestamp }}</em></small>
-                                        </div>
-                                        <form method="POST" action="{% url 'delete_message' message.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                        </form>
-                                    </li>
-                                {% empty %}
-                                    <li class="list-group-item">You have no messages sent yet.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        
-                        
                     </div>
                 </div>
             </div>

@@ -3,7 +3,23 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)  # null=True로 설정
-    solved_problems = models.IntegerField(default=0)
+    image = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    
+
+    @property
+    def solved_problem_count(self):
+        # 문제와 연관된 블로그 게시글 수를 반환
+        return BlogPost.objects.filter(author=self.user, contest_id__isnull=False, index__isnull=False).count()
+    
+    @property
+    def created_problem_count(self):
+        # 사용자가 작성한 Problem 모델의 개수를 반환
+        return Problem.objects.filter(author=self.user).count()
+    
+    @property
+    def account_created_date(self):
+        # 계정 생성 날짜 반환
+        return self.user.date_joined
 
     def __str__(self):
         return self.user.username if self.user else "No User"
@@ -42,6 +58,7 @@ class BlogPost(models.Model):
     index = models.CharField(max_length=10, blank=True, null=True)
     problem_name = models.CharField(max_length=200, blank=True, null=True)
     tags = models.CharField(max_length=200, blank=True, null=True)
+    
 
     def __str__(self):
         return self.title

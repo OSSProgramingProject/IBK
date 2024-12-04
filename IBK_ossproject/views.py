@@ -1,5 +1,6 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.http import HttpResponse
 from .models import UserProfile
@@ -28,7 +29,19 @@ import json
 
 # 기존 뷰 함수들
 def home(request):
-    return render(request, 'home.html')
+    user_created_problem_ids = Problem.objects.values_list('id', flat=True)
+
+    # 문제 풀이로 작성된 블로그만 필터링
+    recommended_blogs = BlogPost.objects.filter(
+        visibility='public',
+    ).filter(
+        Q(contest_id__isnull=False, index__isnull=False) | 
+        Q(contest_id__in=user_created_problem_ids)
+    ).order_by('-created_at')[:3]
+
+    return render(request, 'home.html', {
+        'recommended_blogs': recommended_blogs,
+    })
 
 def user_login(request):
     if request.method == 'POST':
@@ -58,19 +71,35 @@ def profile_management(request):
     if request.method == "POST":
         request.user.username = request.POST.get('user_name')
         request.user.save()
-        user_profile.solved_problems = request.POST.get('solved_problems')
         user_profile.save()
         return redirect('profile_management')
 
     context = {
         'user_profile': user_profile,
         'user_name': request.user.username,
-        'solved_problems': user_profile.solved_problems if user_profile else None,
         'friends': Friendship.objects.filter(Q(user1=request.user) | Q(user2=request.user)),
         'messages_received': Message.objects.filter(receiver=request.user),
         'messages_sent': Message.objects.filter(sender=request.user),
     }
     return render(request, 'profile-management.html', context)
+
+@login_required
+def update_profile_image(request):
+    if request.method == "POST":
+        user = request.user
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+
+        # 프로필 이미지 업데이트
+        if 'image' in request.FILES:
+            user_profile.image = request.FILES['image']
+            user_profile.save()
+
+        return redirect('profile_management')  # 프로필 페이지로 리디렉션
+
+    return render(request, 'profile-management.html')
+
+
+
 
 def follow_user(request):
     if request.method == 'POST':
@@ -152,11 +181,22 @@ def blog_create(request):
             blog_post = form.save(commit=False)
             blog_post.author = request.user
 
-            # 문제 정보가 있으면 저장
-            blog_post.contest_id = request.POST.get('contest_id', '')
-            blog_post.index = request.POST.get('index', '')
-            blog_post.problem_name = request.POST.get('problem_name', '')
-            blog_post.tags = request.POST.get('tags', '')
+            # 문제 정보 확인 및 저장
+            contest_id = request.POST.get('contest_id')
+            index = request.POST.get('index')
+
+            if contest_id and index:
+                # 문제 풀이 글일 경우에만 관련 정보 저장
+                blog_post.contest_id = contest_id
+                blog_post.index = index
+                blog_post.problem_name = request.POST.get('problem_name', '')
+                blog_post.tags = request.POST.get('tags', '')
+            else:
+                # 일반 블로그 글인 경우 문제 관련 정보 초기화
+                blog_post.contest_id = None
+                blog_post.index = None
+                blog_post.problem_name = None
+                blog_post.tags = None
 
             blog_post.save()
             return redirect('blog_post')
@@ -172,7 +212,7 @@ def blog_create(request):
         if contest_id and index and name:
             initial_content = f"Problem: {contest_id} - {index} ({name})\nTags: {tags}\n\nPlease describe your solution here..."
 
-        # 초기 값을 포함한 폼 생성
+        # 폼에 초기 값 설정
         form = BlogPostForm(user=request.user, initial={'content': initial_content})
 
     return render(request, 'blog_creation.html', {
@@ -182,6 +222,7 @@ def blog_create(request):
         'problem_name': name,
         'tags': tags
     })
+
 
 
 def blog_post(request):
@@ -434,11 +475,23 @@ def user_problem(request):
     # 공개된 마지막 게시글 가져오기 (예시)
     latest_post = BlogPost.objects.filter(visibility='public').last()
 
+     # 최신 블로그 게시물 가져오기 (현재 로그인한 사용자 기준)
+    latest_post1 = BlogPost.objects.filter(author=request.user).order_by('-created_at').first()
+
+    # 사용자가 작성한 문제 목록 가져오기
+    user_problems1= request.user.problems.all() if request.user.is_authenticated else []
+
+    # 사용자가 풀이한 문제 블로그 가져오기
+    user_blogs1 = BlogPost.objects.filter(author=request.user) if request.user.is_authenticated else []
+
     # 템플릿에 전달할 데이터
     context = {
         'user_problems': user_problems,
         'user_blogs': user_blogs,
         'latest_post': latest_post,
+        'latest_post': latest_post1,
+        'user_problems': user_problems1,
+        'user_blogs': user_blogs1,
     }
 
     return render(request, 'user_problem.html', context)
@@ -619,12 +672,8 @@ def data_delete(request, id):
     data.delete()
     return redirect('resources_board')
 
-@login_required
-def user_generated_question_bank(request):
-    # 데이터 처리 코드 추가 (예: 사용자 생성 문제 목록 가져오기)
-    user_problems = Problem.objects.all()  # 예시 코드, UserProblem 모델의 모든 문제 가져오기
-    return render(request, 'user_generated_question_bank.html', {'user_problems': user_problems})
 
+@login_required
 def user_generated_question_bank(request):
     difficulty = request.GET.get('difficulty', '')
     tags = request.GET.get('tags', '').split(',')
@@ -640,6 +689,9 @@ def user_generated_question_bank(request):
     if tags and tags != ['']:
         for tag in tags:
             problems = problems.filter(tags__icontains=tag.strip())
+
+    # 블로그 글 가져오기 (전체공개된 것만)
+    user_blogs = BlogPost.objects.filter(visibility='public').order_by('-created_at')
 
     # 페이지네이션 처리
     paginator = Paginator(problems, 7)  # 페이지당 7개의 문제
