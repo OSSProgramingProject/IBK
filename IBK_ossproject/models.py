@@ -140,3 +140,13 @@ class Mission(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Progress(models.Model):
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name='progress_set')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    details = models.TextField()
+    attachment = models.FileField(upload_to='progress_attachments/', null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.mission.title} 진행사항"

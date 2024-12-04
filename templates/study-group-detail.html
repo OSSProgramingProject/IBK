@@ -28,6 +28,37 @@
                                 <h5 class="mb-1">{{ mission.title }}</h5>
                                 <p class="mb-1">{{ mission.description }}</p>
                                 <small class="text-muted">마감일: {{ mission.deadline }}</small>
+                                <hr>
+                                {% if user == group.owner or user in group.members.all %}
+                                <form method="post" action="{% url 'upload_progress' mission.id %}" enctype="multipart/form-data" class="mt-3">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="progress_{{ mission.id }}" class="form-label">진행 사항:</label>
+                                        <textarea class="form-control" id="progress_{{ mission.id }}" name="progress" rows="3" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="attachment_{{ mission.id }}" class="form-label">파일 첨부 (선택 사항):</label>
+                                        <input type="file" class="form-control" id="attachment_{{ mission.id }}" name="attachment">
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-sm">진행 사항 업로드</button>
+                                </form>
+                                {% endif %}
+                                {% with mission.progress_set.all as progresses %}
+                                {% if progresses.exists %}
+                                <ul class="list-group mt-3">
+                                    {% for progress in progresses %}
+                                    <li class="list-group-item">
+                                        <p class="mb-1"><strong>{{ progress.user.username }}</strong>: {{ progress.details }}</p>
+                                        {% if progress.attachment %}
+                                        <a href="{{ progress.attachment.url }}" class="text-decoration-none" target="_blank">첨부 파일 보기</a>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <div class="alert alert-warning mt-3">아직 업로드된 진행 사항이 없습니다.</div>
+                                {% endif %}
+                                {% endwith %}
                             </li>
                         {% endfor %}
                     </ul>

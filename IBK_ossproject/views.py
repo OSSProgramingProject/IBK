@@ -18,7 +18,7 @@ from django.core.paginator import Paginator
 from .models import Question, Comment
 from django.http import JsonResponse
 from .forms import CommentForm
-from .models import StudyGroup, Mission
+from .models import StudyGroup, Mission, Progress
 from .forms import StudyGroupForm
 from .forms import MissionForm
 import requests
@@ -735,3 +735,24 @@ def create_mission(request, group_id):
         form = MissionForm()
 
     return render(request, 'create-mission.html', {'form': form, 'group': group})
+
+def upload_progress(request, mission_id):
+    mission = get_object_or_404(Mission, id=mission_id)
+
+    if request.method == 'POST':
+        progress_text = request.POST.get('progress')
+        attachment = request.FILES.get('attachment')
+
+        # 진행 상황 저장
+        Progress.objects.create(
+            mission=mission,
+            user=request.user,
+            details=progress_text,
+            attachment=attachment
+        )
+        
+        messages.success(request, "진행 사항이 성공적으로 업로드되었습니다.")
+        return redirect('study_group_detail', group_id=mission.group.id)
+
+    messages.error(request, "진행 사항 업로드에 실패했습니다.")
+    return redirect('study_group_detail', group_id=mission.group.id)
