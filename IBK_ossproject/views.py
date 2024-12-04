@@ -757,10 +757,12 @@ def upload_progress(request, mission_id):
     messages.error(request, "진행 사항 업로드에 실패했습니다.")
     return redirect('study_group_detail', group_id=mission.group.id)
 
+
 def delete_mission(request, mission_id):
     mission = get_object_or_404(Mission, id=mission_id)
     if request.user == mission.group.owner:
-        mission.delete()
+        mission.is_deleted = True
+        mission.save()  # 삭제 대신 is_deleted를 True로 설정
         messages.success(request, "미션이 성공적으로 삭제되었습니다.")
     else:
         messages.error(request, "미션을 삭제할 권한이 없습니다.")

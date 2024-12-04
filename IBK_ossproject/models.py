@@ -132,11 +132,11 @@ class StudyGroup(models.Model):
         return self.name
 
 class Mission(models.Model):
-    group = models.ForeignKey(StudyGroup, on_delete=models.CASCADE, related_name='missions')
+    group = models.ForeignKey('StudyGroup', on_delete=models.CASCADE, related_name='missions')
     title = models.CharField(max_length=200)
     description = models.TextField()
     deadline = models.DateField()
-    completed_members = models.ManyToManyField(User, related_name='completed_missions', blank=True)
+    is_deleted = models.BooleanField(default=False)  # 삭제 여부
 
     def __str__(self):
         return self.title
