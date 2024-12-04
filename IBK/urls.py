@@ -59,7 +59,7 @@ urlpatterns = [
     path('study-group/<int:group_id>/', views.study_group_detail, name='study_group_detail'),
     path('study-group/<int:group_id>/create-mission/', views.create_mission, name='create_mission'),
     path('mission/<int:mission_id>/upload-progress/', views.upload_progress, name='upload_progress'),
-
+    path('mission/<int:mission_id>/delete/', views.delete_mission, name='delete_mission'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
