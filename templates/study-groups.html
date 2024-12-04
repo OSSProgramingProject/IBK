@@ -23,7 +23,16 @@
                     <ul>
                         <li>{{ group.owner.username }} (생성자)</li>
                         {% for member in group.members.all %}
-                            <li>{{ member.username }}</li>
+                            <li>
+                                {{ member.username }}
+                                {% if user == group.owner and user != member %}
+                                <!-- 그룹 생성자일 경우, 본인 외의 멤버에 대해서만 강퇴 버튼을 표시 -->
+                                <form method="post" action="{% url 'kick_member' group.id member.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">강퇴하기</button>
+                                </form>
+                                {% endif %}
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>

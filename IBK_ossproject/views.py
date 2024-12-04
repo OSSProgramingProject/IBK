@@ -691,3 +691,20 @@ def leave_study_group(request, group_id):
     if request.user in group.members.all():
         group.members.remove(request.user)
     return redirect('study_groups')  # 스터디 그룹 목록 페이지로 리다이렉트
+
+@login_required
+def kick_member(request, group_id, user_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+    user_to_kick = get_object_or_404(User, id=user_id)
+
+    # 강퇴 권한 확인 (그룹 생성자만 강퇴 가능)
+    if request.user == group.owner:
+        if user_to_kick in group.members.all():
+            group.members.remove(user_to_kick)
+            messages.success(request, f'{user_to_kick.username} 님을 강퇴했습니다.')
+        else:
+            messages.error(request, '해당 사용자는 이 그룹에 참여하고 있지 않습니다.')
+    else:
+        messages.error(request, '강퇴할 권한이 없습니다.')
+
+    return redirect('study_groups')  # 스터디 그룹 목록 페이지로 리다이렉트
