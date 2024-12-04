@@ -18,6 +18,8 @@ from django.core.paginator import Paginator
 from .models import Question, Comment
 from django.http import JsonResponse
 from .forms import CommentForm
+from .models import StudyGroup
+from .forms import StudyGroupForm
 import requests
 import random
 import string
@@ -658,3 +660,20 @@ def user_problem_solving_creation(request, problem_id):
         'problem': problem,
     })
 
+def study_groups(request):
+    groups = StudyGroup.objects.all()
+    return render(request, 'study-groups.html', {'groups': groups})
+
+# 스터디 그룹 생성
+@login_required
+def create_study_group(request):
+    if request.method == 'POST':
+        form = StudyGroupForm(request.POST)
+        if form.is_valid():
+            study_group = form.save(commit=False)
+            study_group.owner = request.user
+            study_group.save()
+            return redirect('study_groups')
+    else:
+        form = StudyGroupForm()
+    return render(request, 'create_study_group.html', {'form': form})

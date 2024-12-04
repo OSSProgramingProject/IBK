@@ -118,3 +118,14 @@ class Data(models.Model):
 
     def __str__(self):
         return self.title
+
+class StudyGroup(models.Model):
+    name = models.CharField(max_length=100)
+    topic = models.CharField(max_length=100)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    members = models.ManyToManyField(User, related_name='study_groups', blank=True)
+
+    def __str__(self):
+        return self.name

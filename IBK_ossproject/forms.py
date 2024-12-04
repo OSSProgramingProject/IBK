@@ -6,6 +6,7 @@ from .models import Problem
 from .models import Question
 from .models import Comment
 from .models import Data
+from .models import StudyGroup
 
 
 
@@ -83,3 +84,8 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'placeholder': '댓글을 작성하세요...', 'rows': 3}),
         }
+
+class StudyGroupForm(forms.ModelForm):
+    class Meta:
+        model = StudyGroup
+        fields = ['name', 'topic', 'description']
